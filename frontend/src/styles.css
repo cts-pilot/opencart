@@ -1,0 +1,9 @@
+@import "bootstrap/dist/css/bootstrap.css";
+
+.grid {
+  width: 100%;
+  padding: 0 0px; 
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;  /* little spacing from sides */
+}

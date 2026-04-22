@@ -1,0 +1,11 @@
+<app-carousel></app-carousel>
+<h3>Featured</h3>
+<div class="grid">
+  <app-product-card
+    *ngFor="let p of products"
+    [product]="p">
+  </app-product-card>
+</div>
+
+<app-brands></app-brands>
+<app-footer></app-footer>

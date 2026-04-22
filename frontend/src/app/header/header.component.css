@@ -1,0 +1,95 @@
+/* Container for alignment */
+.container {
+  width: 90%;
+  margin: auto;
+}
+
+/* TOP BAR */
+.top-bar {
+  background: #eee;
+  font-size: 13px;
+  padding: 5px 0;
+}
+
+.top-bar .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.top-bar .right span {
+  margin-left: 15px;
+  cursor: pointer;
+}
+
+/* MAIN HEADER */
+.main-header {
+  padding: 15px 0;
+}
+
+.header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+.logo img {
+  height: 50px;
+}
+
+/* Search (centered properly) */
+.search {
+  display: flex;
+  width: 50%;
+}
+
+.search input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+}
+
+.search button {
+  padding: 8px 12px;
+  background: #23a1d1;
+  color: white;
+  border: none;
+}
+
+/* Cart */
+.cart {
+  background: #333;
+  color: white;
+  padding: 10px;
+}
+.dropdown {
+  position: relative;
+  cursor: pointer;
+}
+
+.menu {
+  position: absolute;
+  top: 25px;
+  background: white;
+  border: 1px solid #ccc;
+  min-width: 150px;
+  z-index: 1000;
+}
+
+.menu div, .menu a {
+  padding: 8px;
+  display: block;
+  text-decoration: none;
+  color: black;
+}
+
+.menu div:hover, .menu a:hover {
+  background: #eee;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}

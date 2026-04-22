@@ -1,0 +1,38 @@
+.footer {
+  background: #333;
+  color: #ccc;
+  padding: 30px 0;
+  margin-top: 30px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 90%;
+  margin: auto;
+}
+
+.footer h4 {
+  color: white;
+  margin-bottom: 10px;
+}
+
+.footer p {
+  font-size: 13px;
+  margin: 5px 0;
+  cursor: pointer;
+}
+
+.footer p:hover {
+  color: white;
+}
+
+/* bottom section */
+.bottom {
+  text-align: left;
+  width: 90%;
+  margin: 20px auto 0;
+  font-size: 12px;
+  border-top: 1px solid #555;
+  padding-top: 10px;
+}

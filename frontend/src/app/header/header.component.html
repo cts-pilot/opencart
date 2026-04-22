@@ -1,0 +1,56 @@
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="container">
+
+    <!-- LEFT: Currency -->
+    <div class="dropdown">
+      <span (click)="toggleCurrency()">
+        {{currency.symbol}} Currency ▾
+      </span>
+
+      <div class="menu" *ngIf="showCurrency">
+        <div (click)="setCurrency('USD')">💲 US Dollar</div>
+        <div (click)="setCurrency('INR')">₹ Indian Rupee</div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right">
+      <span>📞 123456789</span>
+
+      <div class="dropdown">
+        <span (click)="toggleAccount()">👤 My Account ▾</span>
+
+        <div class="menu" *ngIf="showAccount">
+          <a routerLink="/register">Register</a>
+          <a routerLink="/login">Login</a>
+        </div>
+      </div>
+
+      <span>❤️ Wish List (0)</span>
+      <span>🛒 Shopping Cart</span>
+      <span>✔ Checkout</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ✅ MAIN HEADER (OUTSIDE TOP BAR) -->
+<div class="main-header">
+  <div class="container header-flex">
+
+    <div class="logo">
+      <img src="assets/Open cart logo.png">
+    </div>
+
+    <div class="search">
+      <input type="text" placeholder="Search">
+      <button>🔍</button>
+    </div>
+
+    <div class="cart">
+      🛒 0 item(s) - {{currency.symbol}}0.00
+    </div>
+
+  </div>
+</div>

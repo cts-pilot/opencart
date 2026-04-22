@@ -1,0 +1,41 @@
+.brands {
+  width: 100%;
+  margin: 30px 0;
+  border: 1px solid #ddd;
+  padding: 20px;
+  text-align: center;
+}
+
+/* logos row */
+.brand-list {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.brand-list img {
+  height: 40px;
+  opacity: 0.7;
+}
+
+.brand-list img:hover {
+  opacity: 1;
+}
+
+/* dots */
+.dots {
+  margin-top: 15px;
+}
+
+.dots span {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin: 4px;
+  background: #ccc;
+  border-radius: 50%;
+}
+
+.dots span:first-child {
+  background: black;
+}

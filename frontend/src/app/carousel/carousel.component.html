@@ -1,0 +1,19 @@
+<div class="carousel">
+
+  <!-- Image -->
+  <img [src]="images[currentIndex]" alt="banner">
+
+  <!-- Arrows -->
+  <button class="prev" (click)="prev()">❮</button>
+  <button class="next" (click)="next()">❯</button>
+
+  <!-- Dots -->
+  <div class="dots">
+    <span *ngFor="let img of images; let i = index"
+          [class.active]="i === currentIndex"
+          (click)="setSlide(i)">
+    </span>
+  </div>
+  
+
+</div>

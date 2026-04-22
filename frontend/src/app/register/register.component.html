@@ -1,0 +1,89 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+
+      <!-- Card -->
+      <div class="card shadow mt-3">
+        <div class="card-body p-4">
+
+          <h2 class="text-center mb-3">Register Account</h2>
+
+          <p class="text-center text-muted">
+            If you already have an account,
+            <a href="/home">login here</a>.
+          </p>
+
+          <h5 class="mt-4">Your Personal Details</h5>
+          <hr />
+
+          <form (ngSubmit)="register()">
+
+            <!-- First Name -->
+            <div class="mb-3">
+              <label for="fname" class="form-label">First Name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="fname"
+                name="fname"
+                [(ngModel)]="fname"
+                placeholder="Enter first name"
+                required
+              />
+            </div>
+
+            <!-- Last Name -->
+            <div class="mb-3">
+              <label for="lname" class="form-label">Last Name</label>
+              <input
+                type="text"
+                class="form-control"
+                id="lname"
+                name="lname"
+                [(ngModel)]="lname"
+                placeholder="Enter last name"
+                required
+              />
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label">E-Mail</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                [(ngModel)]="email"
+                placeholder="Enter email"
+                required
+              />
+            </div>
+
+            <!-- Password -->
+            <div class="mb-4">
+              <label for="pass" class="form-label">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="pass"
+                name="password"
+                [(ngModel)]="password"
+                placeholder="Enter password"
+                required
+              />
+            </div>
+
+            <!-- Button -->
+            <button type="submit" class="btn btn-primary w-100">
+              Register
+            </button>
+
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

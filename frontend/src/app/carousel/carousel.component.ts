@@ -11,9 +11,9 @@ import { NgFor, NgClass } from '@angular/common';
 export class CarouselComponent implements OnInit {
 
   images = [
-    'assets/Open cart logo.png',
-    'assets/Open cart logo.png',
-    'assets/Open cart logo.png'
+    'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1400&q=80',
+    'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?auto=format&fit=crop&w=1400&q=80',
+    'https://images.unsplash.com/photo-1555117391-6c0795768da8?w=1400&q=80&auto=format&fit=crop'
   ];
 
   currentIndex = 0;

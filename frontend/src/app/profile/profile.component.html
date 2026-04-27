@@ -1,0 +1,31 @@
+<div class="profile-container">
+  <div class="profile-wrapper">
+    <div class="profile-card">
+      <div class="card-header">
+        <h2>My Profile</h2>
+        <p class="subtitle">View and manage your account</p>
+      </div>
+
+      <div class="profile-content">
+        <div class="info-section">
+          <label>E-Mail Address</label>
+          <div class="info-display">{{ userEmail }}</div>
+        </div>
+
+        <div class="info-section">
+          <label>First Name</label>
+          <div class="info-display">{{ firstName }}</div>
+        </div>
+
+        <div class="info-section">
+          <label>Last Name</label>
+          <div class="info-display">{{ lastName }}</div>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button class="btn-logout" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
+</div>

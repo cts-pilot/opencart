@@ -1,57 +1,76 @@
-<!-- TOP BAR -->
-<div class="top-bar">
+<!-- TOP NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
   <div class="container">
 
-    <!-- LEFT: Currency -->
-    <div class="dropdown">
-      <span (click)="toggleCurrency()">
-        {{currency.symbol}} Currency ▾
-      </span>
+    <!-- Logo -->
+    <a class="navbar-brand d-flex align-items-center" routerLink="/">
+      <img src="assets/Open cart logo.png" alt="OpenCart" height="38">
+    </a>
 
-      <div class="menu" *ngIf="showCurrency">
-        <div (click)="setCurrency('USD')">💲 US Dollar</div>
-        <div (click)="setCurrency('INR')">₹ Indian Rupee</div>
-      </div>
+    <!-- Search Bar -->
+    <div class="flex-grow-1 mx-3 d-none d-lg-block">
+      <input type="text" class="form-control" placeholder="Search products...">
     </div>
 
-    <!-- RIGHT -->
-    <div class="right">
-      <span>📞 123456789</span>
+    <!-- Mobile toggle -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#topNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-      <div class="dropdown">
-        <span (click)="toggleAccount()">👤 My Account ▾</span>
+    <!-- Nav Content -->
+    <div class="collapse navbar-collapse justify-content-end" id="topNav">
+      <ul class="navbar-nav align-items-center gap-3">
 
-        <div class="menu" *ngIf="showAccount">
-          <a routerLink="/register">Register</a>
-          <a routerLink="/login">Login</a>
+        <!-- My Account / User Profile -->
+        <div class="dropdown" *ngIf="!currentUser">
+          <span (click)="toggleAccount()" class="cursor-pointer">👤 My Account ▾</span>
+          <div class="menu" *ngIf="showAccount">
+            <a routerLink="/register">Register</a>
+            <a routerLink="/login">Login</a>
+          </div>
         </div>
-      </div>
 
-      <span>❤️ Wish List (0)</span>
-      <span>🛒 Shopping Cart</span>
-      <span>✔ Checkout</span>
+        <!-- User Profile (when logged in) -->
+        <div class="dropdown" *ngIf="currentUser">
+          <span (click)="toggleUserProfile()" class="cursor-pointer">
+            👤 Profile ▾
+          </span>
+          <div class="menu user-menu" *ngIf="showUserProfile">
+            <div class="user-info">
+              <div class="user-title">User Details</div>
+              <div class="detail-row">
+                <span class="detail-label">First name</span>
+                <span class="detail-value">{{ currentUser.fname }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Last name</span>
+                <span class="detail-value">{{ currentUser.lname }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Email</span>
+                <span class="detail-value">{{ currentUser.email }}</span>
+              </div>
+            </div>
+            <hr class="menu-divider">
+            <a class="menu-item logout" (click)="logout()">Logout</a>
+          </div>
+        </div>
+
+        <!-- Wishlist -->
+        <li class="nav-item">
+          <a class="nav-link wishlist-link" role="button" aria-label="Wishlist">
+            <i class="bi bi-heart"></i> Wishlist (0)
+          </a>
+        </li>
+
+        <!-- Cart -->
+        <li class="nav-item">
+          <a class="nav-link cart-icon-only" role="button" aria-label="Shopping cart">
+            <span class="cart-icon-symbol" aria-hidden="true">🛒</span>
+          </a>
+        </li>
+      </ul>
     </div>
 
   </div>
-</div>
-
-<!--  MAIN HEADER  -->
-<div class="main-header">
-  <div class="container header-flex">
-
-    <div class="logo">
-      <a routerLink="/"><img src="assets/Open cart logo.png"></a>
-      
-    </div>
-
-    <div class="search">
-      <input type="text" placeholder="Search">
-      <button>🔍</button>
-    </div>
-
-    <div class="cart">
-      🛒 0 item(s) - {{currency.symbol}}0.00
-    </div>
-
-  </div>
-</div>
+</nav>

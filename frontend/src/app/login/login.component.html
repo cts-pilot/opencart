@@ -1,33 +1,35 @@
-<div class="container mt-3 d-flex justify-content-center align-items-center">
+<div class="login-container">
+  <div class="login-wrapper">
+    <div class="login-card">
+      <div class="card-header">
+        <h2>Sign In</h2>
+        <p class="subtitle">Sign in to your account</p>
+      </div>
 
-  <div class="col-md-4">
+      <form (ngSubmit)="login()" class="login-form">
+        <div class="error-alert" *ngIf="errorMessage">
+          <span class="error-icon">!</span>
+          <span>{{ errorMessage }}</span>
+        </div>
 
-    <div class="card shadow">
-      <div class="card-body p-4">
+        <div class="form-group">
+          <label for="email">E-Mail Address</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            name="email"
+            [(ngModel)]="email"
+            placeholder="your.email@example.com"
+            required
+          />
+        </div>
 
-        <h3 class="text-center mb-4">Login</h3>
-
-        <form (ngSubmit)="login()">
-
-          <!-- Email -->
-          <div class="mb-3">
-            <label for="email" class="form-label">E-Mail</label>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="password-input-wrapper">
             <input
-              type="email"
-              class="form-control"
-              id="email"
-              name="email"
-              [(ngModel)]="email"
-              placeholder="Enter your email"
-              required
-            />
-          </div>
-
-          <!-- Password -->
-          <div class="mb-4">
-            <label for="password" class="form-label">Password</label>
-            <input
-              type="password"
+              [type]="showPassword ? 'text' : 'password'"
               class="form-control"
               id="password"
               name="password"
@@ -35,17 +37,30 @@
               placeholder="Enter your password"
               required
             />
+            <button 
+              type="button" 
+              class="toggle-password"
+              (click)="togglePasswordVisibility()"
+              tabindex="-1"
+              [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+            >
+              {{ showPassword ? 'Hide' : 'Show' }}
+            </button>
           </div>
+        </div>
 
-          <!-- Button -->
-          <button type="submit" class="btn btn-primary w-100">
-            Login
-          </button>
+        <button 
+          type="submit" 
+          class="btn-login"
+          [disabled]="!email || !password"
+        >
+          Sign In
+        </button>
+      </form>
 
-        </form>
-
+      <div class="register-link">
+        <p>Don't have an account? <a routerLink="/register">Register here</a></p>
       </div>
     </div>
-
   </div>
 </div>

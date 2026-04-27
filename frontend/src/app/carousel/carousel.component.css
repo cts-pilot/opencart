@@ -1,52 +1,82 @@
 .carousel {
   width: 100%;
-  margin: 10px 0;
+  margin: 14px 0 20px;
   position: relative;
-  height: 150px;   /* 🔥 FIX: control height */
+  height: 550px;
   overflow: hidden;
-  border: 1px solid #ddd;
+  border: 1px solid #e1e5ea;
+  border-radius: 4px;
+  background: #ffffff;
 }
 
-/* FIX IMAGE */
 .carousel img {
   width: 100%;
   height: 100%;
-  object-fit: contain;  /* 🔥 IMPORTANT */
+  object-fit: cover;
+  display: block;
 }
 
-/* ARROWS */
 .prev, .next {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0,0,0,0.5);
-  color: white;
+  background: transparent;
+  color: #6b7280;
   border: none;
-  padding: 10px;
+  width: 44px;
+  height: 44px;
+  font-size: 42px;
+  line-height: 1;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
 }
 
 .prev { left: 10px; }
 .next { right: 10px; }
 
-/* DOTS */
+.prev:hover,
+.next:hover {
+  color: #374151;
+}
+
 .dots {
-  position: absolute;       /* 🔥 important */
-  bottom: 10px;             /* place inside image */
+  position: absolute;
+  bottom: 12px;
   left: 50%;
   transform: translateX(-50%);
 }
 
 .dots span {
   display: inline-block;
-  width: 10px;
-  height: 10px;
-  margin: 5px;
-  background: rgba(0,0,0,0.3);   /* visible color */
+  width: 11px;
+  height: 11px;
+  margin: 0 4px;
+  background: #d1d5db;
   border-radius: 50%;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .dots span.active {
-  background: black;   /* active dot */
+  background: #4b5563;
+}
+
+@media (max-width: 768px) {
+  .carousel {
+    height: 350px;
+  }
+
+  .carousel img {
+    padding: 0;
+  }
+
+  .prev,
+  .next {
+    width: 36px;
+    height: 36px;
+    font-size: 30px;
+  }
 }

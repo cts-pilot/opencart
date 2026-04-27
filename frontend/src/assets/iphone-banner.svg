@@ -1,0 +1,14 @@
+<svg width="1200" height="300" viewBox="0 0 1200 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ecfeff"/>
+      <stop offset="100%" stop-color="#dbeafe"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="300" rx="20" fill="url(#bg2)"/>
+  <text x="80" y="130" fill="#0f172a" font-family="Segoe UI, Arial" font-size="56" font-weight="700">iPhone</text>
+  <text x="80" y="180" fill="#334155" font-family="Segoe UI, Arial" font-size="30">Capture more. Do more. Anywhere.</text>
+  <rect x="860" y="45" width="130" height="220" rx="28" fill="#0f172a"/>
+  <rect x="873" y="62" width="104" height="185" rx="20" fill="#1d4ed8"/>
+  <circle cx="925" cy="255" r="8" fill="#94a3b8"/>
+</svg>

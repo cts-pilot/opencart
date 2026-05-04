@@ -1,28 +1,11 @@
-package com.OpenCart.backend.model;
+package com.OpenCart.backend.dto;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "users")
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "user_id")
-    private String userId;
-
-    @Column(name = "first_name")
+public class SellerRegisterRequest {
     private String firstName;
-
-    @Column(name = "last_name")
     private String lastName;
-
     private String email;
     private String password;
-
-    // Getters and Setters
-    public String getUserId() { return userId; }
-    public void setUserId(String userId) { this.userId = userId; }
+    private String shopName;
 
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
@@ -35,4 +18,7 @@ public class User {
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+
+    public String getShopName() { return shopName; }
+    public void setShopName(String shopName) { this.shopName = shopName; }
 }

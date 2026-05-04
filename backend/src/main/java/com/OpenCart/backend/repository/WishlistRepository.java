@@ -1,13 +1,12 @@
 package com.OpenCart.backend.repository;
 
-import com.OpenCart.backend.model.User;
+import com.OpenCart.backend.model.Wishlist;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {
-    Optional<User> findByEmail(String email);
-    boolean existsByEmail(String email);
+public interface WishlistRepository extends JpaRepository<Wishlist, Long> {
+    Optional<Wishlist> findByUserUserId(String userId);
 }

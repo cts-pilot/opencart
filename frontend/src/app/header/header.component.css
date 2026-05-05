@@ -144,6 +144,16 @@
   line-height: 1;
 }
 
+.cart-count {
+  background: #dc2626;
+  color: white;
+  font-size: 11px;
+  border-radius: 999px;
+  padding: 2px 6px;
+  margin-left: 6px;
+  line-height: 1;
+}
+
 .cart-icon-only:hover {
   color: #0d6efd;
 }

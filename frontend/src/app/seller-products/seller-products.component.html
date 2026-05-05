@@ -1,0 +1,66 @@
+<div class="seller-page">
+  <div class="page-header">
+    <h2>My Products</h2>
+    <div class="nav-links">
+      <a routerLink="/seller">Dashboard</a>
+      <a routerLink="/seller/orders">Orders</a>
+      <a routerLink="/seller/profile">Profile</a>
+    </div>
+  </div>
+
+  <div class="product-form">
+    <h3>{{ editingProductId ? 'Edit Product' : 'Add Product' }}</h3>
+    <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+    <div class="form-grid">
+      <input type="text" placeholder="Product Name" [(ngModel)]="productName">
+      <input type="text" placeholder="Image URL" [(ngModel)]="productUrl">
+      <input type="number" placeholder="Price" [(ngModel)]="price">
+      <input type="number" placeholder="Stock" [(ngModel)]="stock">
+      <select [(ngModel)]="categoryId">
+        <option [ngValue]="null">Select Category</option>
+        <option *ngFor="let category of categories" [value]="category.categoryId">
+          {{ category.categoryName }}
+        </option>
+      </select>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="primary" (click)="saveProduct()">
+        {{ editingProductId ? 'Update' : 'Add' }}
+      </button>
+      <button type="button" class="secondary" (click)="resetForm()" *ngIf="editingProductId">Cancel</button>
+    </div>
+  </div>
+
+  <div class="product-list">
+    <div class="list-header">
+      <h3>Current Products</h3>
+      <div class="filter">
+        <label for="categoryFilter">Category</label>
+        <select id="categoryFilter" [(ngModel)]="selectedCategoryId">
+          <option [ngValue]="null">All</option>
+          <option *ngFor="let category of categories" [ngValue]="category.categoryId">
+            {{ category.categoryName }}
+          </option>
+        </select>
+      </div>
+    </div>
+    <div class="loading" *ngIf="isLoading">Loading products...</div>
+    <div class="empty" *ngIf="!isLoading && !products.length">No products found.</div>
+
+    <div class="product-card" *ngFor="let product of filteredProducts">
+      <img [src]="product.productUrl" alt="{{ product.productName }}">
+      <div class="product-info">
+        <h4>{{ product.productName }}</h4>
+        <p>{{ product.price | currency:'USD' }}</p>
+        <p>Stock: {{ product.stock }}</p>
+        <div class="stock-edit">
+          <input type="number" [value]="product.stock" (change)="updateStock(product, $any($event.target).value)">
+        </div>
+      </div>
+      <div class="actions">
+        <button type="button" (click)="startEdit(product)">Edit</button>
+        <button type="button" class="danger" (click)="deleteProduct(product.productId)">Delete</button>
+      </div>
+    </div>
+  </div>
+</div>

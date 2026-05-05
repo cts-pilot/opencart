@@ -1,17 +1,18 @@
 <div class="card">
-  <img [src]="product.image">
+  <a [routerLink]="['/product', product.productId]">
+    <img [src]="product.productUrl" alt="{{ product.productName }}">
+  </a>
 
-  <h4>{{product.name}}</h4>
-  <p>{{product.desc}}</p>
+  <h4>{{ product.productName }}</h4>
+  <p>In stock: {{ product.stock }}</p>
 
   <div>
-    <b>{{product.price}}</b>
+    <b>{{ product.price | currency:'USD' }}</b>
   </div>
 
-  <!-- ✅ ADD THIS -->
   <div class="actions">
-    <button>🛒</button>
-    <button>❤️</button>
-    <button>🔄</button>
+    <button type="button" (click)="addToCart.emit(product)">🛒</button>
+    <button type="button" (click)="addToWishlist.emit(product)">❤️</button>
+    <button type="button" [routerLink]="['/product', product.productId]">🔍</button>
   </div>
 </div>

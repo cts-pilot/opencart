@@ -1,0 +1,24 @@
+<div class="wishlist-container">
+  <h2>Your Wishlist</h2>
+
+  <div class="action-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <div class="loading" *ngIf="isLoading">Loading wishlist...</div>
+
+  <div class="empty" *ngIf="!isLoading && !items.length">
+    <p>Your wishlist is empty.</p>
+    <a routerLink="/">Browse products</a>
+  </div>
+
+  <div class="wishlist-grid" *ngIf="!isLoading && items.length">
+    <div class="wishlist-item" *ngFor="let item of items">
+      <img [src]="item.product.productUrl" alt="{{ item.product.productName }}">
+      <h4>{{ item.product.productName }}</h4>
+      <p>{{ item.product.price | currency:'USD' }}</p>
+      <div class="actions">
+        <button type="button" (click)="addToCart(item)">Add to Cart</button>
+        <button type="button" class="secondary" (click)="removeItem(item)">Remove</button>
+      </div>
+    </div>
+  </div>
+</div>

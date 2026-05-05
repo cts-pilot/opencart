@@ -1,0 +1,35 @@
+<div class="orders-container">
+  <h2>Your Orders</h2>
+
+  <div class="loading" *ngIf="isLoading">Loading orders...</div>
+
+  <div class="empty" *ngIf="!isLoading && !orders.length">
+    <p>No orders yet.</p>
+  </div>
+
+  <div class="order-card" *ngFor="let order of orders">
+    <div class="order-header">
+      <div>
+        <strong>Order #{{ order.orderId }}</strong>
+        <p>{{ order.createdAt | date:'medium' }}</p>
+      </div>
+      <button type="button" (click)="toggleOrderItems(order.orderId)">
+        {{ selectedOrderItems[order.orderId] ? 'Hide Items' : 'View Items' }}
+      </button>
+    </div>
+    <div class="order-address">
+      <span>{{ order.address.address }}, {{ order.address.city }}, {{ order.address.country }}</span>
+    </div>
+
+    <div class="order-items" *ngIf="selectedOrderItems[order.orderId]">
+      <div class="order-item" *ngFor="let item of selectedOrderItems[order.orderId]">
+        <img [src]="item.product.productUrl" alt="{{ item.product.productName }}">
+        <div>
+          <h4>{{ item.product.productName }}</h4>
+          <p>Qty: {{ item.qty }}</p>
+        </div>
+        <span class="status">{{ item.status }}</span>
+      </div>
+    </div>
+  </div>
+</div>

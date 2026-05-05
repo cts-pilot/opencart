@@ -7,6 +7,11 @@
       </div>
 
       <form (ngSubmit)="register()" class="register-form">
+        <div class="error-message" *ngIf="errorMessage">
+          <span class="error-icon">!</span>
+          <span>{{ errorMessage }}</span>
+        </div>
+
         <div class="form-row">
           <div class="form-group">
             <label for="fname">First Name</label>
@@ -78,12 +83,36 @@
           </div>
         </div>
 
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              name="isSeller"
+              [(ngModel)]="isSeller"
+            />
+            Register as seller
+          </label>
+        </div>
+
+        <div class="form-group" *ngIf="isSeller">
+          <label for="shopName">Shop Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="shopName"
+            name="shopName"
+            [(ngModel)]="shopName"
+            placeholder="Your shop name"
+            required
+          />
+        </div>
+
         <button 
           type="submit" 
           class="btn-register"
-          [disabled]="!!passwordError || !fname || !lname || !email || !password"
+          [disabled]="!!passwordError || !fname || !lname || !email || !password || isSubmitting || (isSeller && !shopName)"
         >
-          Create Account
+          {{ isSubmitting ? 'Creating Account...' : 'Create Account' }}
         </button>
       </form>
 

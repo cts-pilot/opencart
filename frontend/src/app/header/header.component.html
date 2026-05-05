@@ -8,7 +8,7 @@
     </a>
 
     <!-- Search Bar -->
-    <div class="flex-grow-1 mx-3 d-none d-lg-block">
+    <div class="flex-grow-1 mx-3 d-none d-lg-block" *ngIf="currentUser?.role !== 'seller'">
       <input type="text" class="form-control" placeholder="Search products...">
     </div>
 
@@ -52,21 +52,24 @@
               </div>
             </div>
             <hr class="menu-divider">
+            <a class="menu-item" routerLink="/profile">Profile</a>
+            <a class="menu-item" routerLink="/orders">Orders</a>
             <a class="menu-item logout" (click)="logout()">Logout</a>
           </div>
         </div>
 
         <!-- Wishlist -->
-        <li class="nav-item">
-          <a class="nav-link wishlist-link" role="button" aria-label="Wishlist">
-            <i class="bi bi-heart"></i> Wishlist (0)
+        <li class="nav-item" *ngIf="currentUser?.role !== 'seller'">
+          <a class="nav-link wishlist-link" routerLink="/wishlist" aria-label="Wishlist">
+            <i class="bi bi-heart"></i> Wishlist ({{ wishlistCount }})
           </a>
         </li>
 
         <!-- Cart -->
-        <li class="nav-item">
-          <a class="nav-link cart-icon-only" role="button" aria-label="Shopping cart">
+        <li class="nav-item" *ngIf="currentUser?.role !== 'seller'">
+          <a class="nav-link cart-icon-only" routerLink="/cart" aria-label="Shopping cart">
             <span class="cart-icon-symbol" aria-hidden="true">🛒</span>
+            <span class="cart-count" *ngIf="cartCount">{{ cartCount }}</span>
           </a>
         </li>
       </ul>

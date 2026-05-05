@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { API_BASE_URL } from './api.config';
+import { AuthResponse } from './api.types';
 
 export interface User {
   email: string;
@@ -7,57 +10,57 @@ export interface User {
   lname: string;
   isLoggedIn: boolean;
   role: 'user' | 'seller';
+  token: string;
+  userId: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly userCredentials = {
-    email: 'testing@gmail.com',
-    password: 'Testing@123'
-  };
-  private readonly sellerCredentials = {
-    email: 'seller@gmail.com',
-    password: 'Seller@123'
-  };
+  private readonly apiBaseUrl = `${API_BASE_URL}/api/user`;
+  private readonly sellerApiBaseUrl = `${API_BASE_URL}/api/seller`;
   private readonly storageKey = 'currentUser';
 
   private readonly userSubject = new BehaviorSubject<User | null>(this.loadUserFromStorage());
   readonly user$ = this.userSubject.asObservable();
 
-  login(email: string, password: string): { success: boolean; role?: 'user' | 'seller' } {
-    // Check for user credentials
-    if (email === this.userCredentials.email && password === this.userCredentials.password) {
-      const user: User = {
+  constructor(private http: HttpClient) {}
+
+  login(email: string, password: string): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.apiBaseUrl}/login`, { email, password })
+      .pipe(tap((response) => this.setSession(response)));
+  }
+
+  loginSeller(email: string, password: string): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.sellerApiBaseUrl}/login`, { email, password })
+      .pipe(tap((response) => this.setSession(response)));
+  }
+
+  register(firstName: string, lastName: string, email: string, password: string): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.apiBaseUrl}/register`, { firstName, lastName, email, password })
+      .pipe(tap((response) => this.setSession(response)));
+  }
+
+  registerSeller(
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+    shopName: string
+  ): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.sellerApiBaseUrl}/register`, {
+        firstName,
+        lastName,
         email,
-        fname: 'Test',
-        lname: 'User',
-        isLoggedIn: true,
-        role: 'user'
-      };
-
-      localStorage.setItem(this.storageKey, JSON.stringify(user));
-      this.userSubject.next(user);
-      return { success: true, role: 'user' };
-    }
-
-    // Check for seller credentials
-    if (email === this.sellerCredentials.email && password === this.sellerCredentials.password) {
-      const seller: User = {
-        email,
-        fname: 'Seller',
-        lname: 'User',
-        isLoggedIn: true,
-        role: 'seller'
-      };
-
-      localStorage.setItem(this.storageKey, JSON.stringify(seller));
-      this.userSubject.next(seller);
-      return { success: true, role: 'seller' };
-    }
-
-    return { success: false };
+        password,
+        shopName
+      })
+      .pipe(tap((response) => this.setSession(response)));
   }
 
   logout(): void {
@@ -67,6 +70,39 @@ export class AuthService {
 
   getCurrentUser(): User | null {
     return this.userSubject.value;
+  }
+
+  getToken(): string | null {
+    return this.userSubject.value?.token ?? null;
+  }
+
+  private setSession(response: AuthResponse): void {
+    const role = this.normalizeRole(response.role);
+    const user: User = {
+      email: response.email,
+      fname: response.firstName,
+      lname: response.lastName,
+      isLoggedIn: true,
+      role,
+      token: response.token,
+      userId: response.userId
+    };
+
+    localStorage.setItem(this.storageKey, JSON.stringify(user));
+    this.userSubject.next(user);
+  }
+
+  private normalizeRole(role: string): 'user' | 'seller' {
+    if (!role) {
+      return 'user';
+    }
+
+    const normalized = role.toLowerCase();
+    if (normalized.includes('seller')) {
+      return 'seller';
+    }
+
+    return 'user';
   }
 
   private loadUserFromStorage(): User | null {

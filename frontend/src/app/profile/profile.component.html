@@ -9,22 +9,84 @@
       <div class="profile-content">
         <div class="info-section">
           <label>E-Mail Address</label>
-          <div class="info-display">{{ userEmail }}</div>
+          <input class="info-input" [(ngModel)]="userEmail" />
         </div>
 
         <div class="info-section">
           <label>First Name</label>
-          <div class="info-display">{{ firstName }}</div>
+          <input class="info-input" [(ngModel)]="firstName" />
         </div>
 
         <div class="info-section">
           <label>Last Name</label>
-          <div class="info-display">{{ lastName }}</div>
+          <input class="info-input" [(ngModel)]="lastName" />
         </div>
       </div>
 
+      <div class="message" *ngIf="message">{{ message }}</div>
+
       <div class="button-group">
+        <button class="btn-save" (click)="saveProfile()">Save</button>
         <button class="btn-logout" (click)="logout()">Logout</button>
+      </div>
+    </div>
+
+    <div class="profile-card address-card">
+      <div class="card-header">
+        <h2>Delivery Addresses</h2>
+        <p class="subtitle">Manage shipping information</p>
+      </div>
+
+      <div class="profile-content">
+        <div class="address-list" *ngIf="addresses.length; else emptyAddresses">
+          <div class="address-item" *ngFor="let address of addresses">
+            <div>
+              <h4>{{ address.address }}</h4>
+              <p>{{ address.city }}, {{ address.country }} - {{ address.pincode }}</p>
+            </div>
+            <div class="address-actions">
+              <button class="btn-secondary" (click)="editAddress(address)">Edit</button>
+              <button class="btn-danger" (click)="deleteAddress(address.addressId)">Delete</button>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #emptyAddresses>
+          <p class="empty-state">No saved addresses yet.</p>
+        </ng-template>
+
+        <div class="address-form">
+          <h3>{{ editingAddressId ? 'Edit Address' : 'Add New Address' }}</h3>
+          <div class="form-grid">
+            <div class="info-section">
+              <label>Country</label>
+              <input class="info-input" [(ngModel)]="addressCountry" />
+            </div>
+            <div class="info-section">
+              <label>City</label>
+              <input class="info-input" [(ngModel)]="addressCity" />
+            </div>
+            <div class="info-section full">
+              <label>Address</label>
+              <input class="info-input" [(ngModel)]="addressLine" />
+            </div>
+            <div class="info-section">
+              <label>Pincode</label>
+              <input class="info-input" [(ngModel)]="addressPincode" />
+            </div>
+          </div>
+
+          <div class="message" *ngIf="addressMessage">{{ addressMessage }}</div>
+
+          <div class="button-group">
+            <button class="btn-save" (click)="saveAddress()">
+              {{ editingAddressId ? 'Update Address' : 'Add Address' }}
+            </button>
+            <button class="btn-secondary" *ngIf="editingAddressId" (click)="cancelAddressEdit()">
+              Cancel
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

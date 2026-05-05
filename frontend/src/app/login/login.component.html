@@ -52,9 +52,9 @@
         <button 
           type="submit" 
           class="btn-login"
-          [disabled]="!email || !password"
+          [disabled]="!email || !password || isSubmitting"
         >
-          Sign In
+          {{ isSubmitting ? 'Signing In...' : 'Sign In' }}
         </button>
       </form>
 

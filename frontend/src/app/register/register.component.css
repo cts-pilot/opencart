@@ -62,6 +62,26 @@
   font-size: 13px;
 }
 
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #374151;
+  font-size: 13px;
+}
+
+.checkbox-label input {
+  width: 16px;
+  height: 16px;
+}
+
 .form-control {
   width: 100%;
   padding: 10px 12px;

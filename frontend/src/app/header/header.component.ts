@@ -4,6 +4,7 @@ import { NgIf } from '@angular/common';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService, User } from '../auth.service';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-header',
@@ -16,22 +17,52 @@ export class HeaderComponent implements OnInit, OnDestroy {
   showAccount = false;
   showUserProfile = false;
   currentUser: User | null = null;
+  cartCount = 0;
+  wishlistCount = 0;
 
   private userSubscription?: Subscription;
+  private cartSubscription?: Subscription;
+  private wishlistSubscription?: Subscription;
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private userService: UserService
+  ) {}
 
   ngOnInit() {
     this.userSubscription = this.authService.user$.subscribe((user) => {
       this.currentUser = user;
       if (!user) {
         this.showUserProfile = false;
+        this.cartCount = 0;
+        this.wishlistCount = 0;
+        return;
+      }
+
+      if (user.role === 'user') {
+        this.userService.refreshCartCount();
+        this.userService.refreshWishlistCount();
+      } else {
+        this.cartCount = 0;
+        this.wishlistCount = 0;
       }
     });
+
+    this.cartSubscription = this.userService.cartCount$.subscribe((count) => {
+      this.cartCount = count;
+    });
+
+    this.wishlistSubscription = this.userService.wishlistCount$.subscribe((count) => {
+      this.wishlistCount = count;
+    });
+
   }
 
   ngOnDestroy() {
     this.userSubscription?.unsubscribe();
+    this.cartSubscription?.unsubscribe();
+    this.wishlistSubscription?.unsubscribe();
   }
 
   toggleAccount() {

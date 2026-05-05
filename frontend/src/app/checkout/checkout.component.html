@@ -1,0 +1,39 @@
+<div class="checkout-container">
+  <h2>Checkout</h2>
+
+  <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <div class="address-section">
+    <h3>Select Address</h3>
+    <div class="loading" *ngIf="isLoading">Loading addresses...</div>
+    <div class="address-list" *ngIf="!isLoading && addresses.length">
+      <label *ngFor="let addr of addresses" class="address-card">
+        <input
+          type="radio"
+          name="address"
+          [value]="addr.addressId"
+          [(ngModel)]="selectedAddressId"
+        />
+        <div>
+          <strong>{{ addr.address }}</strong>
+          <p>{{ addr.city }}, {{ addr.country }} - {{ addr.pincode }}</p>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <div class="address-form">
+    <h3>Add New Address</h3>
+    <div class="form-grid">
+      <input type="text" placeholder="Country" [(ngModel)]="country">
+      <input type="text" placeholder="City" [(ngModel)]="city">
+      <input type="text" placeholder="Address" [(ngModel)]="address">
+      <input type="text" placeholder="Pincode" [(ngModel)]="pincode">
+    </div>
+    <button type="button" (click)="addAddress()">Add Address</button>
+  </div>
+
+  <div class="checkout-actions">
+    <button type="button" class="primary" (click)="placeOrder()">Place Order</button>
+  </div>
+</div>

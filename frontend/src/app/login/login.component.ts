@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { catchError } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,7 @@ export class LoginComponent {
         password='';
         errorMessage = '';
         showPassword = false;
+  isSubmitting = false;
 
   constructor(private router: Router, private authService: AuthService){}
 
@@ -27,18 +29,26 @@ export class LoginComponent {
             return;
           }
 
-          const result = this.authService.login(this.email, this.password);
-          
-          if (result.success) {
-            // Redirect based on user role
-            if (result.role === 'seller') {
-              this.router.navigate(['/seller']);
-            } else {
-              this.router.navigate(['/']);
+          this.isSubmitting = true;
+
+          this.authService
+            .loginSeller(this.email, this.password)
+            .pipe(catchError(() => this.authService.login(this.email, this.password)))
+            .subscribe({
+            next: (response) => {
+              this.isSubmitting = false;
+              const role = response.role?.toLowerCase().includes('seller') ? 'seller' : 'user';
+              if (role === 'seller') {
+                this.router.navigate(['/seller']);
+              } else {
+                this.router.navigate(['/']);
+              }
+            },
+            error: (error) => {
+              this.isSubmitting = false;
+              this.errorMessage = error?.error?.message || 'Invalid email or password';
             }
-          } else {
-            this.errorMessage = 'Invalid email or password. Try testing@gmail.com / Testing@123 or seller@gmail.com / Seller@123';
-          }
+          });
         }
 
         togglePasswordVisibility() {

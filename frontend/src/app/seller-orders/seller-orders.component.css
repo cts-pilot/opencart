@@ -1,0 +1,60 @@
+.seller-page {
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 0 16px 40px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  margin-left: 12px;
+  text-decoration: none;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.order-card {
+  display: grid;
+  grid-template-columns: 100px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+  margin-bottom: 12px;
+}
+
+.order-info h4 {
+  margin: 0 0 6px;
+}
+
+.order-info p {
+  margin: 0 0 4px;
+}
+
+.order-card img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.order-actions select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+}
+
+.loading,
+.empty {
+  text-align: center;
+  color: #6b7280;
+}

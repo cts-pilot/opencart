@@ -1,0 +1,179 @@
+
+.seller-container {
+	display: grid;
+	grid-template-columns: 220px 1fr;
+	min-height: 100vh;
+	background: #f5f7fb;
+}
+
+.sidebar {
+	background: #111827;
+	color: white;
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+
+.sidebar h2 {
+	margin: 0;
+}
+
+.sidebar nav {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.sidebar button {
+	background: transparent;
+	border: none;
+	color: white;
+	text-align: left;
+	padding: 8px 12px;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.sidebar button.active,
+.sidebar button:hover {
+	background: #2563eb;
+}
+
+.sidebar .logout {
+	margin-top: auto;
+	background: #ef4444;
+	text-align: center;
+}
+
+.content {
+	padding: 24px;
+}
+
+.panel {
+	background: #ffffff;
+	border: 1px solid #e5e7eb;
+	border-radius: 12px;
+	padding: 20px;
+	margin-top: 16px;
+}
+
+.section-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 16px;
+	flex-wrap: wrap;
+	margin-bottom: 12px;
+}
+
+.filter {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.filter label {
+	font-weight: 600;
+	color: #374151;
+}
+
+.filter select {
+	min-width: 180px;
+}
+
+.form-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 12px;
+	margin-bottom: 12px;
+}
+
+input,
+select {
+	padding: 10px 12px;
+	border: 1px solid #d1d5db;
+	border-radius: 8px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.primary {
+	background: #2563eb;
+	color: white;
+	border: none;
+	padding: 10px 16px;
+	border-radius: 8px;
+	cursor: pointer;
+	align-self: flex-start;
+}
+
+.danger {
+	background: #fee2e2;
+	color: #b91c1c;
+	border: none;
+	padding: 6px 12px;
+	border-radius: 6px;
+}
+
+.table {
+	margin-top: 12px;
+}
+
+.table-row {
+	display: grid;
+	grid-template-columns: 2fr 1fr 1fr 1fr;
+	gap: 12px;
+	padding: 10px 0;
+	border-bottom: 1px solid #eef2f7;
+	align-items: center;
+}
+
+.orders-table .table-row {
+	grid-template-columns: 2fr 1.5fr 0.8fr 1fr 1.2fr;
+}
+
+.table-row span {
+	display: flex;
+	align-items: center;
+}
+
+.table-row.header {
+	font-weight: 700;
+	color: #6b7280;
+}
+
+.review-actions {
+	display: flex;
+	gap: 12px;
+	margin-bottom: 12px;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+.review-list .review {
+	padding: 10px 0;
+	border-bottom: 1px solid #eef2f7;
+}
+
+.rating {
+	color: #f59e0b;
+	font-weight: 600;
+}
+
+.message {
+	color: #2563eb;
+	font-weight: 600;
+}
+
+@media (max-width: 900px) {
+	.seller-container {
+		grid-template-columns: 1fr;
+	}
+
+	.sidebar {
+		flex-direction: row;
+		align-items: center;
+		flex-wrap: wrap;
+	}
+}

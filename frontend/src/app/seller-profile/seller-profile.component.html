@@ -1,0 +1,27 @@
+<div class="seller-page">
+  <div class="page-header">
+    <h2>Seller Profile</h2>
+    <div class="nav-links">
+      <a routerLink="/seller">Dashboard</a>
+      <a routerLink="/seller/products">Products</a>
+      <a routerLink="/seller/orders">Orders</a>
+    </div>
+  </div>
+
+  <div class="profile-card">
+    <div class="row">
+      <label>Shop Name</label>
+      <input type="text" [(ngModel)]="shopName" />
+    </div>
+    <div class="row">
+      <label>Email</label>
+      <div class="value">{{ profile?.user?.email }}</div>
+    </div>
+    <div class="row">
+      <label>Owner</label>
+      <div class="value">{{ profile?.user?.firstName }} {{ profile?.user?.lastName }}</div>
+    </div>
+    <div class="message" *ngIf="message">{{ message }}</div>
+    <button type="button" class="primary" (click)="save()">Save</button>
+  </div>
+</div>

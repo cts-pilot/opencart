@@ -1,0 +1,50 @@
+<div class="product-detail" *ngIf="!isLoading && product">
+  <div class="product-main">
+    <div class="image-wrapper">
+      <img [src]="product.productUrl" alt="{{ product.productName }}">
+    </div>
+    <div class="product-info">
+      <h2>{{ product.productName }}</h2>
+      <p class="price">{{ product.price | currency:'USD' }}</p>
+      <p class="stock">Stock: {{ product.stock }}</p>
+
+      <div class="actions">
+        <button type="button" (click)="addToCart()">Add to Cart</button>
+        <button type="button" class="secondary" (click)="addToWishlist()">Add to Wishlist</button>
+      </div>
+      <div class="action-error" *ngIf="actionError">{{ actionError }}</div>
+    </div>
+  </div>
+
+  <div class="reviews">
+    <h3>Reviews</h3>
+    <div class="review" *ngFor="let review of reviews">
+      <div class="review-header">
+        <span class="rating">{{ review.rating }} ★</span>
+      </div>
+      <p>{{ review.comment }}</p>
+    </div>
+    <div class="empty" *ngIf="!reviews.length">No reviews yet.</div>
+  </div>
+
+  <div class="review-form">
+    <h4>Add Review</h4>
+    <label>Rating</label>
+    <select [(ngModel)]="rating">
+      <option *ngFor="let r of [5,4,3,2,1]" [value]="r">{{ r }}</option>
+    </select>
+    <label>Comment</label>
+    <textarea [(ngModel)]="comment" rows="4" placeholder="Write your review..."></textarea>
+    <button type="button" (click)="submitReview()" [disabled]="isSubmittingReview || !comment.trim()">
+      {{ isSubmittingReview ? 'Submitting...' : 'Submit Review' }}
+    </button>
+  </div>
+</div>
+
+<div class="loading" *ngIf="isLoading">
+  Loading product...
+</div>
+
+<div class="error" *ngIf="!isLoading && errorMessage">
+  {{ errorMessage }}
+</div>

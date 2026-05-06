@@ -1,5 +1,6 @@
 .navbar {
-  background: #23a1d1;
+  background: #232f3e;
+  border-bottom: 1px solid #0f172a;
 }
 
 .navbar ul {
@@ -16,11 +17,12 @@
 }
 
 .navbar a {
-  color: white;
+  color: #f9fafb;
   text-decoration: none;
   font-weight: 500;
 }
 
 .navbar a:hover {
-  text-decoration: underline;
+  color: #fbbf24;
+  text-decoration: none;
 }

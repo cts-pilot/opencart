@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Category, Product } from '../api.types';
 import { ProductService } from '../product.service';
 import { SellerService } from '../seller.service';
@@ -26,10 +26,25 @@ export class SellerProductsComponent implements OnInit {
   price: number | null = null;
   stock: number | null = null;
   categoryId: number | null = null;
+  private pendingEditId: number | null = null;
 
-  constructor(private sellerService: SellerService, private productService: ProductService) {}
+  constructor(
+    private sellerService: SellerService,
+    private productService: ProductService,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe((params) => {
+      const id = params.get('productId');
+      this.pendingEditId = id ? Number(id) : null;
+      if (this.pendingEditId && this.products.length) {
+        const match = this.products.find((product) => product.productId === this.pendingEditId);
+        if (match) {
+          this.startEdit(match);
+        }
+      }
+    });
     this.loadProducts();
     this.productService.getCategories().subscribe((categories) => (this.categories = categories));
   }
@@ -39,6 +54,12 @@ export class SellerProductsComponent implements OnInit {
     this.sellerService.getProducts().subscribe({
       next: (products) => {
         this.products = products;
+        if (this.pendingEditId) {
+          const match = this.products.find((product) => product.productId === this.pendingEditId);
+          if (match) {
+            this.startEdit(match);
+          }
+        }
         this.isLoading = false;
       },
       error: () => {

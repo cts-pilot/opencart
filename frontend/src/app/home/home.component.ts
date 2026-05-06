@@ -9,6 +9,7 @@ import { ProductService } from '../product.service';
 import { UserService } from '../user.service';
 import { AuthService } from '../auth.service';
 import { Category, Product } from '../api.types';
+import { SearchService } from '../search.service';
 
 @Component({
   selector: 'app-home',
@@ -18,10 +19,12 @@ import { Category, Product } from '../api.types';
   styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit {
+  allProducts: Product[] = [];
   products: Product[] = [];
   categories: Category[] = [];
   isLoading = true;
   selectedCategoryId: number | null = null;
+  searchTerm = '';
   actionError = '';
 
   constructor(
@@ -29,37 +32,66 @@ export class HomeComponent implements OnInit {
     private userService: UserService,
     private route: ActivatedRoute,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private searchService: SearchService
   ) {}
 
   ngOnInit(): void {
     this.productService.getCategories().subscribe((categories) => {
       this.categories = categories;
+      const defaultMobileCategory = this.categories.find(
+        (category) => category.categoryName.toLowerCase() === 'mobile'
+      );
+
+      if (!this.selectedCategoryId && defaultMobileCategory) {
+        this.selectedCategoryId = defaultMobileCategory.categoryId;
+      }
+    });
+
+    this.searchService.searchTerm$.subscribe((term) => {
+      this.searchTerm = term.trim().toLowerCase();
+      this.applyFilters();
     });
 
     this.route.paramMap.subscribe((params) => {
       const categoryIdParam = params.get('categoryId');
-      this.selectedCategoryId = categoryIdParam ? Number(categoryIdParam) : null;
+      this.selectedCategoryId = categoryIdParam ? Number(categoryIdParam) : this.selectedCategoryId;
       this.loadProducts();
     });
   }
 
   loadProducts(): void {
     this.isLoading = true;
-    const request$ = this.selectedCategoryId
-      ? this.productService.getProductsByCategory(this.selectedCategoryId)
-      : this.productService.getProducts();
-
-    request$.subscribe({
+    this.productService.getProducts().subscribe({
       next: (products) => {
-        this.products = products;
+        this.allProducts = products;
+        this.applyFilters();
         this.isLoading = false;
       },
       error: () => {
         this.products = [];
+        this.allProducts = [];
         this.isLoading = false;
       }
     });
+  }
+
+  private applyFilters(): void {
+    let filtered = [...this.allProducts];
+
+    if (this.selectedCategoryId) {
+      filtered = filtered.filter(
+        (product) => product.category?.categoryId === this.selectedCategoryId
+      );
+    }
+
+    if (this.searchTerm) {
+      filtered = filtered.filter((product) =>
+        product.productName.toLowerCase().includes(this.searchTerm)
+      );
+    }
+
+    this.products = filtered;
   }
 
   handleAddToCart(product: Product): void {

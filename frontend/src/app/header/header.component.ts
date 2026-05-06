@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService, User } from '../auth.service';
 import { UserService } from '../user.service';
+import { SearchService } from '../search.service';
 
 @Component({
   selector: 'app-header',
@@ -27,7 +28,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private searchService: SearchService
   ) {}
 
   ngOnInit() {
@@ -79,5 +81,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.authService.logout();
     this.showUserProfile = false;
     this.router.navigate(['/login']);
+  }
+
+  applySearch(term: string): void {
+    this.searchService.setSearchTerm(term.trim());
   }
 }

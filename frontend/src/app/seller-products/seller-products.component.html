@@ -51,7 +51,7 @@
       <img [src]="product.productUrl" alt="{{ product.productName }}">
       <div class="product-info">
         <h4>{{ product.productName }}</h4>
-        <p>{{ product.price | currency:'USD' }}</p>
+        <p>{{ product.price | currency:'INR':'symbol' }}</p>
         <p>Stock: {{ product.stock }}</p>
         <div class="stock-edit">
           <input type="number" [value]="product.stock" (change)="updateStock(product, $any($event.target).value)">

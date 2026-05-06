@@ -4,12 +4,25 @@
 
     <!-- Logo -->
     <a class="navbar-brand d-flex align-items-center" routerLink="/">
-      <img src="assets/Open cart logo.png" alt="OpenCart" height="38">
+      <span class="brand-text">OpenCart</span>
     </a>
 
     <!-- Search Bar -->
     <div class="flex-grow-1 mx-3 d-none d-lg-block" *ngIf="currentUser?.role !== 'seller'">
-      <input type="text" class="form-control" placeholder="Search products...">
+      <div class="input-group">
+        <input
+          #searchInput
+          type="text"
+          class="form-control"
+          placeholder="Search products..."
+          (keyup.enter)="applySearch(searchInput.value)"
+        >
+        <button class="btn search-btn" type="button" (click)="applySearch(searchInput.value)" aria-label="Search">
+          <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M15.5 14h-.79l-.28-.27a6 6 0 1 0-.71.71l.27.28v.79L20 20.49 21.49 19zM10 15.5a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+          </svg>
+        </button>
+      </div>
     </div>
 
     <!-- Mobile toggle -->
@@ -52,8 +65,18 @@
               </div>
             </div>
             <hr class="menu-divider">
-            <a class="menu-item" routerLink="/profile">Profile</a>
-            <a class="menu-item" routerLink="/orders">Orders</a>
+            <a
+              class="menu-item"
+              [routerLink]="currentUser.role === 'seller' ? '/seller/profile' : '/profile'"
+            >
+              Profile
+            </a>
+            <a
+              class="menu-item"
+              [routerLink]="currentUser.role === 'seller' ? '/seller/orders' : '/orders'"
+            >
+              Orders
+            </a>
             <a class="menu-item logout" (click)="logout()">Logout</a>
           </div>
         </div>

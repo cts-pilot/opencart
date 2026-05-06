@@ -7,7 +7,7 @@
   <p>In stock: {{ product.stock }}</p>
 
   <div>
-    <b>{{ product.price | currency:'USD' }}</b>
+    <b>{{ product.price | currency:'INR':'symbol' }}</b>
   </div>
 
   <div class="actions">

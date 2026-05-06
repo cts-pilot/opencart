@@ -5,7 +5,7 @@
     </div>
     <div class="product-info">
       <h2>{{ product.productName }}</h2>
-      <p class="price">{{ product.price | currency:'USD' }}</p>
+      <p class="price">{{ product.price | currency:'INR':'symbol' }}</p>
       <p class="stock">Stock: {{ product.stock }}</p>
 
       <div class="actions">

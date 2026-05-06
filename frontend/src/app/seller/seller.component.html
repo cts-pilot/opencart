@@ -2,10 +2,10 @@
   <aside class="sidebar">
     <h2>Seller</h2>
     <nav>
-      <button (click)="activeTab = 'products'" [class.active]="activeTab === 'products'">Products</button>
-      <button (click)="activeTab = 'orders'" [class.active]="activeTab === 'orders'">Orders</button>
-      <button (click)="activeTab = 'reviews'" [class.active]="activeTab === 'reviews'">Reviews</button>
-      <button (click)="activeTab = 'settings'" [class.active]="activeTab === 'settings'">Settings</button>
+      <a class="nav-link" routerLink="/seller">Dashboard</a>
+      <a class="nav-link" routerLink="/seller/products">Products</a>
+      <a class="nav-link" routerLink="/seller/orders">Orders</a>
+      <a class="nav-link" routerLink="/seller/profile">Profile</a>
     </nav>
     <button class="logout" (click)="logout()">Logout</button>
   </aside>
@@ -14,101 +14,73 @@
     <h1>Seller Dashboard</h1>
     <p class="message" *ngIf="message">{{ message }}</p>
 
-    <section *ngIf="activeTab === 'products'" class="panel">
-      <h3>Add Product</h3>
-      <div class="form-grid">
-        <input type="text" placeholder="Product Name" [(ngModel)]="productName">
-        <input type="text" placeholder="Image URL" [(ngModel)]="productUrl">
-        <input type="number" placeholder="Price" [(ngModel)]="price">
-        <input type="number" placeholder="Stock" [(ngModel)]="stock">
-        <select [(ngModel)]="categoryId">
-          <option [ngValue]="null">Select Category</option>
-          <option *ngFor="let cat of categories" [ngValue]="cat.categoryId">{{ cat.categoryName }}</option>
-        </select>
-      </div>
-      <button class="primary" (click)="addProduct()">Add Product</button>
+    <section class="panel">
+      <h3>Analytics</h3>
+      <p class="message" *ngIf="message">{{ message }}</p>
 
-      <div class="section-header">
-        <h3 class="section-title">My Products</h3>
-        <div class="filter">
-          <label for="sellerCategoryFilter">Category</label>
-          <select id="sellerCategoryFilter" [(ngModel)]="selectedCategoryId">
-            <option [ngValue]="null">All</option>
-            <option *ngFor="let cat of categories" [ngValue]="cat.categoryId">{{ cat.categoryName }}</option>
-          </select>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-label">Total Products</span>
+          <span class="stat-value">{{ products.length }}</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Total Orders</span>
+          <span class="stat-value">{{ orders.length }}</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Categories</span>
+          <span class="stat-value">{{ categories.length }}</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Total Revenue</span>
+          <span class="stat-value">{{ totalRevenue | currency:'INR':'symbol' }}</span>
         </div>
       </div>
-      <div class="table">
-        <div class="table-row header">
-          <span>Product</span>
-          <span>Price</span>
-          <span>Stock</span>
-          <span>Actions</span>
-        </div>
-        <div class="table-row" *ngFor="let product of filteredProducts">
-          <span>{{ product.productName }}</span>
-          <span>{{ product.price | currency:'USD' }}</span>
-          <span>
-            <input type="number" [value]="product.stock" (change)="updateStock(product, $any($event.target).value)" />
-          </span>
-          <span>
-            <button class="danger" (click)="deleteProduct(product.productId)">Delete</button>
-          </span>
-        </div>
-      </div>
-    </section>
 
-    <section *ngIf="activeTab === 'orders'" class="panel">
-      <h3>Orders</h3>
-      <div class="table orders-table">
-        <div class="table-row header">
-          <span>Order Item</span>
-          <span>Customer</span>
-          <span>Qty</span>
-          <span>Status</span>
-          <span>Update</span>
+      <div class="analytics-grid">
+        <div class="chart-card" *ngIf="categoryBreakdown.length">
+          <h4>Products by Category</h4>
+          <div class="metric-list">
+            <div class="metric-row" *ngFor="let item of categoryBreakdown">
+              <span class="metric-label">{{ item.label }}</span>
+              <span class="metric-value">{{ item.value }}</span>
+              <div class="metric-bar">
+                <span class="metric-fill" [style.width.%]="(item.value / (products.length || 1)) * 100"></span>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="table-row" *ngFor="let order of orders">
-          <span>{{ order.product.productName }}</span>
-          <span>
-            {{ order.order?.user?.firstName ? (order.order?.user?.firstName + ' ' + order.order?.user?.lastName) : '—' }}
-          </span>
-          <span>{{ order.qty }}</span>
-          <span>{{ order.status }}</span>
-          <span>
-            <select [ngModel]="order.status" (ngModelChange)="updateOrderStatus(order.orderItemId, $event)">
-              <option value="PENDING">PENDING</option>
-              <option value="SHIPPED">SHIPPED</option>
-              <option value="DELIVERED">DELIVERED</option>
-              <option value="CANCELLED">CANCELLED</option>
-            </select>
-          </span>
+        <div class="chart-card" *ngIf="orderStatusBreakdown.length">
+          <h4>Orders by Status</h4>
+          <div class="metric-list">
+            <div class="metric-row" *ngFor="let item of orderStatusBreakdown">
+              <span class="metric-label">{{ item.label }}</span>
+              <span class="metric-value">{{ item.value }}</span>
+              <div class="metric-bar">
+                <span class="metric-fill" [style.width.%]="(item.value / (orders.length || 1)) * 100"></span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </section>
 
-    <section *ngIf="activeTab === 'reviews'" class="panel">
-      <h3>Product Reviews</h3>
-      <div class="review-actions">
-        <select #reviewProduct>
-          <option *ngFor="let product of products" [value]="product.productId">{{ product.productName }}</option>
-        </select>
-        <button class="primary" (click)="loadReviews(reviewProduct.value)">Load Reviews</button>
-      </div>
-      <div class="review-list">
-        <div class="review" *ngFor="let review of reviews">
-          <span class="rating">{{ review.rating }} ★</span>
-          <p>{{ review.comment }}</p>
+      <div class="chart-card">
+        <h4>Top 10 Recent Reviews</h4>
+        <div class="review-list" *ngIf="topReviews.length; else noReviews">
+          <div class="review-item" *ngFor="let review of topReviews">
+            <div class="review-header">
+              <span class="review-rating">{{ review.rating }} ★</span>
+              <span class="review-user">
+                {{ review.user?.firstName ? (review.user?.firstName + ' ' + review.user?.lastName) : 'Customer' }}
+              </span>
+            </div>
+            <p class="review-comment">{{ review.comment }}</p>
+          </div>
         </div>
-        <div class="empty" *ngIf="!reviews.length">No reviews available.</div>
+        <ng-template #noReviews>
+          <div class="empty">No reviews yet</div>
+        </ng-template>
       </div>
-    </section>
-
-    <section *ngIf="activeTab === 'settings'" class="panel">
-      <h3>Shop Settings</h3>
-      <label>Shop Name</label>
-      <input type="text" [(ngModel)]="shopName" />
-      <button class="primary" (click)="updateShopName()">Update</button>
     </section>
   </main>
 </div>

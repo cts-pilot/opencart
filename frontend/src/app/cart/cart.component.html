@@ -15,21 +15,21 @@
       <img [src]="item.product.productUrl" alt="{{ item.product.productName }}">
       <div class="item-info">
         <h4>{{ item.product.productName }}</h4>
-        <p>{{ item.product.price | currency:'USD' }}</p>
+        <p>{{ item.product.price | currency:'INR':'symbol' }}</p>
       </div>
       <div class="qty-controls">
         <button type="button" (click)="updateQty(item, item.qty - 1)">-</button>
         <span>{{ item.qty }}</span>
         <button type="button" (click)="updateQty(item, item.qty + 1)">+</button>
       </div>
-      <div class="item-total">{{ item.product.price * item.qty | currency:'USD' }}</div>
+      <div class="item-total">{{ item.product.price * item.qty | currency:'INR':'symbol' }}</div>
       <button type="button" class="remove" (click)="removeItem(item)">Remove</button>
     </div>
 
     <div class="cart-summary">
       <div class="summary-row">
         <span>Total</span>
-        <strong>{{ total | currency:'USD' }}</strong>
+        <strong>{{ total | currency:'INR':'symbol' }}</strong>
       </div>
       <div class="summary-actions">
         <button type="button" class="secondary" (click)="clearCart()">Clear Cart</button>

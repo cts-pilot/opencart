@@ -85,9 +85,31 @@ export class RegisterComponent {
         },
         error: (error) => {
           this.isSubmitting = false;
-          this.errorMessage = error?.error?.message || 'Registration failed. Please try again.';
+          this.errorMessage = this.getRegisterErrorMessage(error);
         }
       });
+    }
+
+    private getRegisterErrorMessage(error: unknown): string {
+      const httpError = error as { error?: any; message?: string; status?: number } | null;
+      const serverError = httpError?.error;
+
+      const directMessage =
+        serverError?.error ||
+        serverError?.message ||
+        (typeof serverError === 'string' ? serverError : '') ||
+        httpError?.message ||
+        '';
+
+      if (directMessage) {
+        return directMessage;
+      }
+
+      if (httpError?.status === 0) {
+        return 'Unable to reach the server. Please check your connection.';
+      }
+
+      return 'Registration failed. Please try again.';
     }
 
     togglePasswordVisibility() {

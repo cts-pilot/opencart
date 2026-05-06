@@ -14,7 +14,7 @@
     <div class="wishlist-item" *ngFor="let item of items">
       <img [src]="item.product.productUrl" alt="{{ item.product.productName }}">
       <h4>{{ item.product.productName }}</h4>
-      <p>{{ item.product.price | currency:'USD' }}</p>
+      <p>{{ item.product.price | currency:'INR':'symbol' }}</p>
       <div class="actions">
         <button type="button" (click)="addToCart(item)">Add to Cart</button>
         <button type="button" class="secondary" (click)="removeItem(item)">Remove</button>

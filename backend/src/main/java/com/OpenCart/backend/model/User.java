@@ -10,7 +10,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "user_id")
     private String userId;
-
+    //name =sathya
     @Column(name = "first_name")
     private String firstName;
 

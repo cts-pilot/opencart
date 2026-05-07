@@ -1,13 +1,14 @@
 .navbar {
-  background-color: #131921 !important;
-  border-bottom: 1px solid #0f172a;
+  background-color: #374151 !important;
+  border-bottom: 2px solid #1f2937;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .brand-text {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #f9fafb;
-  letter-spacing: 0.5px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #f3f4f6;
+  letter-spacing: -0.5px;
 }
 
 .navbar .navbar-brand,
@@ -15,21 +16,23 @@
 .dropdown > span,
 .cart-icon-only,
 .wishlist-link {
-  color: #f9fafb;
+  color: #e5e7eb;
 }
 
 .navbar .nav-link:hover,
 .dropdown > span:hover,
 .cart-icon-only:hover,
 .wishlist-link:hover {
-  color: #fbbf24;
+  color: #9ca3af;
+  transition: color 0.3s ease;
 }
 
 .search-btn {
-  background-color: #febd69;
-  border-color: #febd69;
-  color: #111827;
+  background-color: #6b7280;
+  border-color: #6b7280;
+  color: #ffffff;
   font-weight: 600;
+  transition: all 0.3s ease;
 }
 
 .search-icon {
@@ -44,18 +47,26 @@
 
 .search-btn:hover,
 .search-btn:focus {
-  background-color: #f3a847;
-  border-color: #f3a847;
-  color: #111827;
+  background-color: #4b5563;
+  border-color: #4b5563;
+  color: #ffffff;
 }
 
 .input-group .form-control {
-  border-color: #febd69;
+  border-color: #4b5563;
+  background-color: #1f2937;
+  color: #e5e7eb;
+}
+
+.input-group .form-control::placeholder {
+  color: #9ca3af;
+  opacity: 1;
 }
 
 .input-group .form-control:focus {
-  border-color: #f3a847;
-  box-shadow: 0 0 0 0.2rem rgba(254, 189, 105, 0.25);
+  border-color: #9ca3af;
+  background-color: #1f2937;
+  box-shadow: 0 0 0 0.2rem rgba(156, 163, 175, 0.15);
 }
 
 .dropdown {

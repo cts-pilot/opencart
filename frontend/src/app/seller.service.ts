@@ -42,6 +42,13 @@ export class SellerService {
     return this.http.patch<Product>(`${this.apiBaseUrl}/products/${productId}/stock`, { stock });
   }
 
+  updateOffer(productId: number, offerPercent: number | null, offerValidUntil: string | null): Observable<Product> {
+    return this.http.patch<Product>(`${this.apiBaseUrl}/products/${productId}/offer`, {
+      offerPercent,
+      offerValidUntil
+    });
+  }
+
   getOrders(): Observable<OrderItem[]> {
     return this.http.get<OrderItem[]>(`${this.apiBaseUrl}/orders`);
   }

@@ -1,0 +1,128 @@
+<div class="seller-container">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-mark">OC</span>
+      <span class="brand-text">Seller</span>
+    </div>
+    <nav>
+      <a class="nav-link" routerLink="/seller"><span class="ni">▦</span> Dashboard</a>
+      <a class="nav-link" routerLink="/seller/products"><span class="ni">📦</span> Products</a>
+      <a class="nav-link" routerLink="/seller/orders"><span class="ni">🧾</span> Orders</a>
+      <a class="nav-link active" routerLink="/seller/reviews"><span class="ni">⭐</span> Reviews</a>
+      <a class="nav-link" routerLink="/seller/profile"><span class="ni">👤</span> Profile</a>
+    </nav>
+    <button class="logout" (click)="logout()">Logout</button>
+  </aside>
+
+  <main class="content">
+    <div class="content-card">
+      <header class="topbar">
+        <div>
+          <h1 class="page-title">Customer reviews</h1>
+          <p class="page-sub">See what customers are saying about your products.</p>
+        </div>
+      </header>
+
+      <!-- KPI strip -->
+      <section class="kpi-grid">
+        <div class="kpi">
+          <span class="kpi-label">Total reviews</span>
+          <span class="kpi-value">{{ totalReviews | number }}</span>
+          <span class="kpi-delta info">All products</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi-label">Average rating</span>
+          <span class="kpi-value">{{ averageRating }} <span class="star-inline">★</span></span>
+          <span class="kpi-delta info">Out of 5</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi-label">5-star reviews</span>
+          <span class="kpi-value">{{ fiveStarCount }}</span>
+          <span class="kpi-delta info">Customer favourites</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi-label">Low ratings</span>
+          <span class="kpi-value">{{ lowRatingCount }}</span>
+          <span class="kpi-delta warn">Needs attention</span>
+        </div>
+      </section>
+
+      <!-- Distribution + Filters -->
+      <section class="row-2">
+        <div class="card dist-card">
+          <h3>Rating distribution</h3>
+          <div class="dist-list">
+            <div class="dist-row" *ngFor="let d of distribution">
+              <span class="dist-stars">{{ d.stars }} ★</span>
+              <div class="dist-bar"><span [style.width.%]="d.percent"></span></div>
+              <span class="dist-count">{{ d.count }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card filter-card">
+          <h3>Filter reviews</h3>
+          <div class="filter-stack">
+            <div class="search-wrap">
+              <span class="search-icon">🔍</span>
+              <input
+                type="text"
+                class="search-input"
+                placeholder="Search by comment, customer or product"
+                [(ngModel)]="searchTerm"
+                name="search"
+              />
+            </div>
+            <select class="filter-select" [(ngModel)]="ratingFilter" name="ratingFilter">
+              <option value="ALL">All ratings</option>
+              <option value="5">5 stars</option>
+              <option value="4">4 stars</option>
+              <option value="3">3 stars</option>
+              <option value="2">2 stars</option>
+              <option value="1">1 star</option>
+            </select>
+            <select class="filter-select" [(ngModel)]="productFilter" name="productFilter">
+              <option [ngValue]="null">All products</option>
+              <option *ngFor="let p of products" [ngValue]="p.productId">{{ p.productName }}</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Review list -->
+      <section class="review-grid">
+        <article class="review-card" *ngFor="let review of filteredReviews">
+          <div class="rc-head">
+            <div class="rc-author">
+              <span class="avatar">{{ initials(review) }}</span>
+              <div>
+                <div class="rc-name">{{ reviewerName(review) }}</div>
+                <div class="rc-rating">
+                  <span *ngFor="let on of starsArray(review.rating)" class="star" [class.on]="on">★</span>
+                  <span class="rc-num">{{ review.rating }}/5</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="rc-body">{{ review.comment }}</p>
+
+          <div class="rc-foot" *ngIf="review.productId">
+            <img [src]="review.productUrl" [alt]="review.productName">
+            <span class="rc-product">{{ review.productName }}</span>
+          </div>
+        </article>
+
+        <div class="empty" *ngIf="!isLoading && !filteredReviews.length">
+          <div class="empty-icon">💬</div>
+          <h3>No reviews yet</h3>
+          <p>Once customers leave reviews on your products, they'll show up here.</p>
+        </div>
+        <div class="empty" *ngIf="isLoading">
+          <div class="spinner"></div>
+          <p>Loading reviews…</p>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>

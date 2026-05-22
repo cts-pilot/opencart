@@ -141,9 +141,117 @@ export class SellerComponent implements OnInit {
 
   get totalRevenue(): number {
     return this.orders.reduce((sum, order) => {
-      const price = order.product?.price ?? 0;
+      const price = order.unitPrice != null ? order.unitPrice : (order.product?.price ?? 0);
       return sum + price * order.qty;
     }, 0);
+  }
+
+  get currentMonthLabel(): string {
+    return new Date().toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+  }
+
+  get uniqueCustomers(): number {
+    const ids = new Set<string>();
+    this.orders.forEach((o) => {
+      const id = o.order?.user?.userId || o.order?.user?.email;
+      if (id) ids.add(id);
+    });
+    return ids.size;
+  }
+
+  get lowStockCount(): number {
+    return this.products.filter((p) => (p.stock ?? 0) <= 5).length;
+  }
+
+  get weeklyRevenue(): Array<{ label: string; height: number; peak: boolean }> {
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    const totals = new Array(7).fill(0);
+
+    this.orders.forEach((o) => {
+      const created = o.order?.createdAt;
+      if (!created) return;
+      const d = new Date(created);
+      if (Number.isNaN(d.getTime())) return;
+      const idx = (d.getDay() + 6) % 7;
+      totals[idx] += this.orderAmount(o);
+    });
+
+    const max = Math.max(...totals, 1);
+    const heights = totals.map((t) => Math.max(18, Math.round((t / max) * 100)));
+    const peakValue = Math.max(...totals);
+
+    return days.map((label, i) => ({
+      label,
+      height: totals[i] === 0 && peakValue === 0 ? this.fallbackHeights[i] : heights[i],
+      peak: peakValue > 0 && totals[i] === peakValue
+    }));
+  }
+
+  private fallbackHeights = [55, 38, 95, 75, 90, 50, 65];
+
+  get topProducts(): Array<{ name: string; emoji: string; color: string; value: number; percent: number }> {
+    const colors = ['#7c3aed', '#10b981', '#d97706', '#3b82f6', '#ec4899'];
+    const emojis = ['👟', '👕', '🎒', '🎧', '⌚'];
+
+    const map = new Map<number, { name: string; value: number }>();
+    this.orders.forEach((o) => {
+      const id = o.product?.productId;
+      if (id == null) return;
+      const value = this.orderAmount(o);
+      const existing = map.get(id);
+      if (existing) existing.value += value;
+      else map.set(id, { name: o.product?.productName ?? 'Unknown', value });
+    });
+
+    const sorted = Array.from(map.values()).sort((a, b) => b.value - a.value).slice(0, 4);
+    const max = sorted[0]?.value || 1;
+
+    return sorted.map((p, i) => ({
+      name: p.name,
+      emoji: emojis[i % emojis.length],
+      color: colors[i % colors.length],
+      value: p.value,
+      percent: Math.max(8, Math.round((p.value / max) * 100))
+    }));
+  }
+
+  get recentOrders() {
+    return [...this.orders]
+      .sort((a, b) => (b.orderItemId ?? 0) - (a.orderItemId ?? 0))
+      .slice(0, 5);
+  }
+
+  orderShortId(order: OrderItem): string {
+    const id = order.orderItemId ?? 0;
+    return (4820 + Number(id)).toString().slice(-4);
+  }
+
+  customerShortName(order: OrderItem): string {
+    const fname = order.order?.user?.firstName;
+    const lname = order.order?.user?.lastName;
+    if (!fname && !lname) return '—';
+    const last = lname ? ` ${lname.charAt(0)}.` : '';
+    return `${fname ?? ''}${last}`.trim();
+  }
+
+  orderAmount(order: OrderItem): number {
+    const unit = order.unitPrice != null ? order.unitPrice : (order.product?.price ?? 0);
+    return unit * (order.qty ?? 0);
+  }
+
+  statusLabel(status?: string): string {
+    if (!status) return '—';
+    const s = status.toUpperCase();
+    return s.charAt(0) + s.slice(1).toLowerCase();
+  }
+
+  statusClass(status?: string): string {
+    const s = (status || '').toUpperCase();
+    if (s === 'DELIVERED') return 'st-delivered';
+    if (s === 'SHIPPED') return 'st-shipped';
+    if (s === 'PENDING') return 'st-pending';
+    if (s === 'CANCELLED') return 'st-cancelled';
+    return 'st-default';
   }
 
   get categoryBreakdown(): Array<{ label: string; value: number }> {

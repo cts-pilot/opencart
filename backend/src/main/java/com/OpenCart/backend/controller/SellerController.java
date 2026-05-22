@@ -134,6 +134,19 @@ public class SellerController {
         return ResponseEntity.ok(sellerService.updateStock(userId, productId, req.getStock()));
     }
 
+    /**
+     * PATCH /api/seller/products/{productId}/offer
+     * Body : { offerPercent, offerValidUntil }
+     * Pass null offerPercent to remove the offer.
+     */
+    @PatchMapping("/products/{productId}/offer")
+    public ResponseEntity<Product> updateOffer(
+            @AuthenticationPrincipal String userId,
+            @PathVariable Long productId,
+            @RequestBody OfferRequest req) {
+        return ResponseEntity.ok(sellerService.updateOffer(userId, productId, req));
+    }
+
     // ═══════════════════════════════════════════════════════════════
     //  ORDERS
     // ═══════════════════════════════════════════════════════════════

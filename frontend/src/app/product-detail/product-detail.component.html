@@ -1,50 +1,127 @@
-<div class="product-detail" *ngIf="!isLoading && product">
-  <div class="product-main">
-    <div class="image-wrapper">
-      <img [src]="product.productUrl" alt="{{ product.productName }}">
+<div class="pd-shell" *ngIf="!isLoading && product">
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb">
+    <a routerLink="/">Home</a>
+    <span class="sep">›</span>
+    <span *ngIf="product.category?.categoryName">{{ product.category?.categoryName }}</span>
+    <span class="sep" *ngIf="product.category?.categoryName">›</span>
+    <span class="current">{{ product.productName }}</span>
+  </nav>
+
+  <div class="pd-main">
+    <!-- LEFT: image -->
+    <div class="pd-gallery">
+      <div class="image-stage">
+        <img [src]="product.productUrl" alt="{{ product.productName }}">
+      </div>
     </div>
-    <div class="product-info">
-      <h2>{{ product.productName }}</h2>
-      <p class="price">{{ product.price | currency:'INR':'symbol' }}</p>
-      <p class="stock">Stock: {{ product.stock }}</p>
+
+    <!-- RIGHT: info -->
+    <div class="pd-info">
+      <div class="pd-info-head">
+        <span class="category-chip" *ngIf="product.category?.categoryName">{{ product.category?.categoryName }}</span>
+        <h1 class="pd-title">{{ product.productName }}</h1>
+
+        <div class="rating-row" *ngIf="reviews.length">
+          <span class="stars">★★★★★</span>
+          <span class="rating-text">{{ reviews.length }} review<span *ngIf="reviews.length > 1">s</span></span>
+        </div>
+      </div>
+
+      <div class="offer-banner" *ngIf="offer">
+        <span class="offer-tag">🏷️ Offer {{ offer.discount }}% OFF</span>
+        <span class="offer-save">You save {{ savings | currency:'INR':'symbol':'1.0-0' }}</span>
+      </div>
+
+      <div class="price-block">
+        <span class="price-label">Price</span>
+        <span class="price-stack">
+          <span class="price-value">{{ discountedPrice | currency:'INR':'symbol' }}</span>
+          <span class="price-was" *ngIf="offer">{{ product.price | currency:'INR':'symbol' }}</span>
+        </span>
+      </div>
+
+      <div class="stock-row">
+        <span class="stock-pill" *ngIf="product.stock > 0">In stock · {{ product.stock }} available</span>
+        <span class="stock-pill out" *ngIf="product.stock === 0">Out of stock</span>
+      </div>
 
       <div class="actions">
-        <button type="button" (click)="addToCart()">Add to Cart</button>
-        <button type="button" class="secondary" (click)="addToWishlist()">Add to Wishlist</button>
+        <button type="button" class="btn-primary" (click)="addToCart()" [disabled]="product.stock === 0">
+          <span class="btn-icon">🛒</span> Add to cart
+        </button>
+        <button type="button" class="btn-ghost" (click)="addToWishlist()">
+          <span class="btn-icon">❤</span> Wishlist
+        </button>
       </div>
-      <div class="action-error" *ngIf="actionError">{{ actionError }}</div>
+
+      <div class="action-error" *ngIf="actionError">
+        <span class="err-icon">!</span>
+        <span>{{ actionError }}</span>
+      </div>
+
+      <ul class="perks">
+        <li><span class="perk-icon">🚚</span> Free delivery on orders over ₹500</li>
+        <li><span class="perk-icon">↩️</span> 7-day easy return</li>
+        <li><span class="perk-icon">🔒</span> Secure checkout</li>
+      </ul>
     </div>
   </div>
 
-  <div class="reviews">
-    <h3>Reviews</h3>
-    <div class="review" *ngFor="let review of reviews">
-      <div class="review-header">
-        <span class="rating">{{ review.rating }} ★</span>
-      </div>
-      <p>{{ review.comment }}</p>
+  <!-- Reviews -->
+  <section class="pd-section">
+    <div class="section-head">
+      <h2>Customer reviews</h2>
+      <span class="count-chip" *ngIf="reviews.length">{{ reviews.length }} total</span>
     </div>
-    <div class="empty" *ngIf="!reviews.length">No reviews yet.</div>
-  </div>
 
-  <div class="review-form">
-    <h4>Add Review</h4>
-    <label>Rating</label>
-    <select [(ngModel)]="rating">
-      <option *ngFor="let r of [5,4,3,2,1]" [value]="r">{{ r }}</option>
-    </select>
-    <label>Comment</label>
-    <textarea [(ngModel)]="comment" rows="4" placeholder="Write your review..."></textarea>
-    <button type="button" (click)="submitReview()" [disabled]="isSubmittingReview || !comment.trim()">
-      {{ isSubmittingReview ? 'Submitting...' : 'Submit Review' }}
+    <div class="reviews-list" *ngIf="reviews.length">
+      <div class="review-card" *ngFor="let review of reviews">
+        <div class="review-top">
+          <span class="rating">{{ review.rating }} ★</span>
+        </div>
+        <p class="review-body">{{ review.comment }}</p>
+      </div>
+    </div>
+
+    <div class="reviews-empty" *ngIf="!reviews.length">
+      <div class="empty-icon">💬</div>
+      <p>Be the first to review this product.</p>
+    </div>
+  </section>
+
+  <!-- Add review -->
+  <section class="pd-section review-form">
+    <div class="section-head">
+      <h2>Write a review</h2>
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label>Your rating</label>
+        <select [(ngModel)]="rating">
+          <option *ngFor="let r of [5,4,3,2,1]" [value]="r">{{ r }} ★</option>
+        </select>
+      </div>
+
+      <div class="field full">
+        <label>Your review</label>
+        <textarea [(ngModel)]="comment" rows="4" placeholder="Share your experience with this product…"></textarea>
+      </div>
+    </div>
+
+    <button type="button" class="btn-primary submit" (click)="submitReview()" [disabled]="isSubmittingReview || !comment.trim()">
+      {{ isSubmittingReview ? 'Submitting…' : 'Submit review' }}
     </button>
-  </div>
+  </section>
 </div>
 
-<div class="loading" *ngIf="isLoading">
-  Loading product...
+<div class="pd-loading" *ngIf="isLoading">
+  <div class="spinner"></div>
+  <p>Loading product…</p>
 </div>
 
-<div class="error" *ngIf="!isLoading && errorMessage">
-  {{ errorMessage }}
+<div class="pd-error" *ngIf="!isLoading && errorMessage">
+  <div class="empty-icon">⚠️</div>
+  <p>{{ errorMessage }}</p>
 </div>

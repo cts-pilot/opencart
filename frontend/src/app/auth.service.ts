@@ -63,6 +63,14 @@ export class AuthService {
       .pipe(tap((response) => this.setSession(response)));
   }
 
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiBaseUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiBaseUrl}/reset-password`, { token, newPassword });
+  }
+
   logout(): void {
     localStorage.removeItem(this.storageKey);
     this.userSubject.next(null);

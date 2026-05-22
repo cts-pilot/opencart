@@ -21,11 +21,13 @@ export class ProfileComponent implements OnInit {
   message = '';
   addressMessage = '';
   addresses: Address[] = [];
-  addressCountry = '';
+  addressCountry = 'India';
   addressCity = '';
   addressLine = '';
   addressPincode = '';
+  pincodeError = '';
   editingAddressId: number | null = null;
+  countryOptions = ['India', 'United States', 'United Kingdom', 'Canada', 'Australia', 'Other'];
 
   constructor(
     private authService: AuthService,
@@ -88,17 +90,44 @@ export class ProfileComponent implements OnInit {
 
   cancelAddressEdit(): void {
     this.editingAddressId = null;
-    this.addressCountry = '';
+    this.addressCountry = 'India';
     this.addressCity = '';
     this.addressLine = '';
     this.addressPincode = '';
+    this.pincodeError = '';
+    this.addressMessage = '';
+  }
+
+  validatePincode(): void {
+    const value = (this.addressPincode || '').trim();
+    if (!value) {
+      this.pincodeError = '';
+      return;
+    }
+    if (this.addressCountry === 'India') {
+      if (!/^[1-9][0-9]{5}$/.test(value)) {
+        this.pincodeError = 'Indian PIN must be 6 digits and cannot start with 0.';
+        return;
+      }
+    } else {
+      if (!/^[A-Za-z0-9\s\-]{3,10}$/.test(value)) {
+        this.pincodeError = 'Postal code must be 3–10 characters (letters, digits, dash).';
+        return;
+      }
+    }
+    this.pincodeError = '';
   }
 
   saveAddress(): void {
     this.addressMessage = '';
+    this.validatePincode();
 
     if (!this.addressCountry || !this.addressCity || !this.addressLine || !this.addressPincode) {
       this.addressMessage = 'Please fill all address fields.';
+      return;
+    }
+    if (this.pincodeError) {
+      this.addressMessage = 'Please fix the pincode before saving.';
       return;
     }
 

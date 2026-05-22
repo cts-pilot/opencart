@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -249,11 +250,28 @@ public class UserService {
                 throw new RuntimeException("Insufficient stock for product: " + product.getProductName());
             }
 
+            // Snapshot price + offer at placement time so the order is
+            // immune to later changes on the Product.
+            Integer percentBoxed = product.getOfferPercent();
+            LocalDate validUntil = product.getOfferValidUntil();
+            double basePrice = product.getPrice() != null ? product.getPrice() : 0.0;
+
+            double unitPrice = basePrice;
+            Integer frozenPercent = null;
+            if (percentBoxed != null && percentBoxed > 0
+                    && (validUntil == null || !validUntil.isBefore(LocalDate.now()))) {
+                int percent = percentBoxed;
+                unitPrice = Math.round(basePrice * (1.0 - percent / 100.0));
+                frozenPercent = percent;
+            }
+
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(savedOrder);
             orderItem.setProduct(product);
             orderItem.setQty(cartItem.getQty());
             orderItem.setStatus("PENDING");
+            orderItem.setUnitPrice(unitPrice);
+            orderItem.setOfferPercent(frozenPercent);
             orderItemRepository.save(orderItem);
 
             product.setStock(product.getStock() - cartItem.getQty());

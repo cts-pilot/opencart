@@ -4,7 +4,7 @@ import { ProductCardComponent } from '../product-card/product-card.component';
 import { BrandsComponent } from '../brands/brands.component';
 import { FooterComponent } from '../footer/footer.component';
 import { NgFor, NgIf } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProductService } from '../product.service';
 import { UserService } from '../user.service';
 import { AuthService } from '../auth.service';
@@ -14,7 +14,7 @@ import { SearchService } from '../search.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CarouselComponent, ProductCardComponent, BrandsComponent, FooterComponent, NgFor, NgIf],
+  imports: [CarouselComponent, ProductCardComponent, BrandsComponent, FooterComponent, NgFor, NgIf, RouterLink],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

@@ -1,73 +1,92 @@
-<div class="register-container">
-  <div class="register-wrapper">
-    <div class="register-card">
-      <div class="card-header">
-        <h2>Create Account</h2>
-        <p class="subtitle">Fill your details to continue</p>
-      </div>
+<div class="auth-page">
+  <!-- LEFT: brand panel -->
+  <aside class="auth-brand">
+    <a class="brand-logo" routerLink="/">OpenCart</a>
 
-      <form (ngSubmit)="register()" class="register-form">
-        <div class="error-message" *ngIf="errorMessage">
+    <div class="brand-body">
+      <h1>Join OpenCart.</h1>
+      <p class="brand-tag">Create an account in seconds — shop trusted brands, track orders, and even open your own shop.</p>
+
+      <ul class="brand-features">
+        <li><span class="dot"></span> Personalised recommendations</li>
+        <li><span class="dot"></span> Exclusive seller-only deals</li>
+        <li><span class="dot"></span> Become a seller in one click</li>
+      </ul>
+    </div>
+
+    <div class="brand-footer">© {{ year }} OpenCart</div>
+  </aside>
+
+  <!-- RIGHT: form panel -->
+  <main class="auth-form-panel">
+    <div class="auth-form-wrap">
+      <header class="auth-form-head">
+        <h2>Create your account</h2>
+        <p>It only takes a minute. Fill in your details to get started.</p>
+      </header>
+
+      <form (ngSubmit)="register()" class="auth-form" novalidate>
+        <div class="error-alert" *ngIf="errorMessage" role="alert">
           <span class="error-icon">!</span>
           <span>{{ errorMessage }}</span>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label for="fname">First Name</label>
+        <div class="field-row">
+          <div class="field">
+            <label for="fname">First name</label>
             <input
               type="text"
-              class="form-control"
               id="fname"
               name="fname"
               [(ngModel)]="fname"
               placeholder="John"
+              autocomplete="given-name"
               required
             />
           </div>
 
-          <div class="form-group">
-            <label for="lname">Last Name</label>
+          <div class="field">
+            <label for="lname">Last name</label>
             <input
               type="text"
-              class="form-control"
               id="lname"
               name="lname"
               [(ngModel)]="lname"
               placeholder="Doe"
+              autocomplete="family-name"
               required
             />
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="email">E-Mail Address</label>
+        <div class="field">
+          <label for="email">Email address</label>
           <input
             type="email"
-            class="form-control"
             id="email"
             name="email"
             [(ngModel)]="email"
-            placeholder="your.email@example.com"
+            placeholder="you@example.com"
+            autocomplete="email"
             required
           />
         </div>
 
-        <div class="form-group">
+        <div class="field">
           <label for="password">Password</label>
-          <div class="password-input-wrapper">
+          <div class="password-wrap">
             <input
               [type]="showPassword ? 'text' : 'password'"
-              class="form-control"
               id="password"
               name="password"
               [(ngModel)]="password"
               (input)="validatePassword(password)"
-              placeholder="Enter a strong password"
+              placeholder="At least 8 characters, 1 uppercase, 1 special"
+              autocomplete="new-password"
               required
             />
-            <button 
-              type="button" 
+            <button
+              type="button"
               class="toggle-password"
               (click)="togglePasswordVisibility()"
               tabindex="-1"
@@ -76,29 +95,25 @@
               {{ showPassword ? 'Hide' : 'Show' }}
             </button>
           </div>
-
-          <div class="error-message" *ngIf="passwordError">
+          <div class="field-error" *ngIf="passwordError">
             <span class="error-icon">!</span>
             <span>{{ passwordError }}</span>
           </div>
         </div>
 
-        <div class="form-group checkbox-group">
-          <label class="checkbox-label">
-            <input
-              type="checkbox"
-              name="isSeller"
-              [(ngModel)]="isSeller"
-            />
-            Register as seller
-          </label>
-        </div>
+        <label class="seller-toggle">
+          <input
+            type="checkbox"
+            name="isSeller"
+            [(ngModel)]="isSeller"
+          />
+          <span>Register as a seller</span>
+        </label>
 
-        <div class="form-group" *ngIf="isSeller">
-          <label for="shopName">Shop Name</label>
+        <div class="field" *ngIf="isSeller">
+          <label for="shopName">Shop name</label>
           <input
             type="text"
-            class="form-control"
             id="shopName"
             name="shopName"
             [(ngModel)]="shopName"
@@ -107,18 +122,18 @@
           />
         </div>
 
-        <button 
-          type="submit" 
-          class="btn-register"
+        <button
+          type="submit"
+          class="btn-primary"
           [disabled]="!!passwordError || !fname || !lname || !email || !password || isSubmitting || (isSeller && !shopName)"
         >
-          {{ isSubmitting ? 'Creating Account...' : 'Create Account' }}
+          {{ isSubmitting ? 'Creating account…' : 'Create account' }}
         </button>
       </form>
 
-      <div class="login-link">
-        <p>Already have an account? <a routerLink="/login">Login here</a></p>
-      </div>
+      <p class="auth-alt">
+        Already have an account? <a routerLink="/login">Sign in</a>
+      </p>
     </div>
-  </div>
+  </main>
 </div>

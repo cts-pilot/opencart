@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProductService } from '../product.service';
 import { UserService } from '../user.service';
 import { AuthService } from '../auth.service';
+import { OfferService, Offer } from '../offer.service';
 import { Product, Review } from '../api.types';
 
 @Component({
@@ -30,8 +31,21 @@ export class ProductDetailComponent implements OnInit {
     private productService: ProductService,
     private userService: UserService,
     private authService: AuthService,
+    private offerService: OfferService,
     private router: Router
   ) {}
+
+  get offer(): Offer | null {
+    return this.offerService.forProduct(this.product);
+  }
+
+  get discountedPrice(): number {
+    return this.product ? this.offerService.discountedPrice(this.product) : 0;
+  }
+
+  get savings(): number {
+    return this.product ? this.offerService.savings(this.product) : 0;
+  }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {

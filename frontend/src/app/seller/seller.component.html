@@ -1,86 +1,131 @@
 <div class="seller-container">
   <aside class="sidebar">
-    <h2>Seller</h2>
+    <div class="sidebar-brand">
+      <span class="brand-mark">OC</span>
+      <span class="brand-text">Seller</span>
+    </div>
     <nav>
-      <a class="nav-link" routerLink="/seller">Dashboard</a>
-      <a class="nav-link" routerLink="/seller/products">Products</a>
-      <a class="nav-link" routerLink="/seller/orders">Orders</a>
-      <a class="nav-link" routerLink="/seller/profile">Profile</a>
+      <a class="nav-link active" routerLink="/seller">
+        <span class="ni">▦</span> Dashboard
+      </a>
+      <a class="nav-link" routerLink="/seller/products">
+        <span class="ni">📦</span> Products
+      </a>
+      <a class="nav-link" routerLink="/seller/orders">
+        <span class="ni">🧾</span> Orders
+      </a>
+      <a class="nav-link" routerLink="/seller/reviews">
+        <span class="ni">⭐</span> Reviews
+      </a>
+      <a class="nav-link" routerLink="/seller/profile">
+        <span class="ni">👤</span> Profile
+      </a>
     </nav>
     <button class="logout" (click)="logout()">Logout</button>
   </aside>
 
   <main class="content">
-    <h1>Seller Dashboard</h1>
-    <p class="message" *ngIf="message">{{ message }}</p>
+    <div class="content-card">
+      <!-- Top bar -->
+      <header class="topbar">
+        <h1 class="page-title">Dashboard</h1>
+        <div class="topbar-actions">
+          <span class="month-pill">{{ currentMonthLabel }}</span>
+          <button class="bell-btn" aria-label="Notifications">
+            <span class="bell-icon">🔔</span>
+            <span class="bell-dot"></span>
+          </button>
+        </div>
+      </header>
 
-    <section class="panel">
-      <h3>Analytics</h3>
-      <p class="message" *ngIf="message">{{ message }}</p>
+      <p class="banner" *ngIf="message">{{ message }}</p>
 
-      <div class="stats-grid">
-        <div class="stat-card">
-          <span class="stat-label">Total Products</span>
-          <span class="stat-value">{{ products.length }}</span>
+      <!-- KPI cards -->
+      <section class="kpi-grid">
+        <div class="kpi">
+          <span class="kpi-label">Revenue</span>
+          <span class="kpi-value">{{ totalRevenue | currency:'INR':'symbol':'1.0-0' }}</span>
+          <span class="kpi-delta up">↑ 18% this month</span>
         </div>
-        <div class="stat-card">
-          <span class="stat-label">Total Orders</span>
-          <span class="stat-value">{{ orders.length }}</span>
+        <div class="kpi">
+          <span class="kpi-label">Orders</span>
+          <span class="kpi-value">{{ orders.length | number }}</span>
+          <span class="kpi-delta up">↑ 12% this month</span>
         </div>
-        <div class="stat-card">
-          <span class="stat-label">Categories</span>
-          <span class="stat-value">{{ categories.length }}</span>
+        <div class="kpi">
+          <span class="kpi-label">Customers</span>
+          <span class="kpi-value">{{ uniqueCustomers | number }}</span>
+          <span class="kpi-delta up">↑ 9% this month</span>
         </div>
-        <div class="stat-card">
-          <span class="stat-label">Total Revenue</span>
-          <span class="stat-value">{{ totalRevenue | currency:'INR':'symbol' }}</span>
+        <div class="kpi">
+          <span class="kpi-label">Low stock</span>
+          <span class="kpi-value">{{ lowStockCount }}</span>
+          <span class="kpi-delta warn">Needs restock</span>
         </div>
-      </div>
+      </section>
 
-      <div class="analytics-grid">
-        <div class="chart-card" *ngIf="categoryBreakdown.length">
-          <h4>Products by Category</h4>
-          <div class="metric-list">
-            <div class="metric-row" *ngFor="let item of categoryBreakdown">
-              <span class="metric-label">{{ item.label }}</span>
-              <span class="metric-value">{{ item.value }}</span>
-              <div class="metric-bar">
-                <span class="metric-fill" [style.width.%]="(item.value / (products.length || 1)) * 100"></span>
+      <!-- Chart + Top products row -->
+      <section class="row-2">
+        <!-- Weekly revenue chart -->
+        <div class="card chart-card">
+          <div class="card-head">
+            <h3>Weekly revenue</h3>
+            <span class="live-pill"><span class="live-dot"></span>Live</span>
+          </div>
+          <div class="chart">
+            <div class="bar-wrap" *ngFor="let bar of weeklyRevenue">
+              <div class="bar" [class.peak]="bar.peak" [style.height.%]="bar.height"></div>
+              <span class="bar-label">{{ bar.label }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top products -->
+        <div class="card top-card">
+          <div class="card-head">
+            <h3>Top products</h3>
+          </div>
+          <ul class="top-list">
+            <li class="top-item" *ngFor="let item of topProducts; let i = index">
+              <span class="tp-icon" [style.background]="item.color">{{ item.emoji }}</span>
+              <div class="tp-body">
+                <div class="tp-name">{{ item.name }}</div>
+                <div class="tp-bar"><span [style.width.%]="item.percent" [style.background]="item.color"></span></div>
               </div>
-            </div>
-          </div>
+              <span class="tp-value" [style.color]="item.color">{{ item.value | currency:'INR':'symbol':'1.1-1' }}</span>
+            </li>
+            <li class="empty" *ngIf="!topProducts.length">No sales yet</li>
+          </ul>
         </div>
-        <div class="chart-card" *ngIf="orderStatusBreakdown.length">
-          <h4>Orders by Status</h4>
-          <div class="metric-list">
-            <div class="metric-row" *ngFor="let item of orderStatusBreakdown">
-              <span class="metric-label">{{ item.label }}</span>
-              <span class="metric-value">{{ item.value }}</span>
-              <div class="metric-bar">
-                <span class="metric-fill" [style.width.%]="(item.value / (orders.length || 1)) * 100"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      </section>
 
-      <div class="chart-card">
-        <h4>Top 10 Recent Reviews</h4>
-        <div class="review-list" *ngIf="topReviews.length; else noReviews">
-          <div class="review-item" *ngFor="let review of topReviews">
-            <div class="review-header">
-              <span class="review-rating">{{ review.rating }} ★</span>
-              <span class="review-user">
-                {{ review.user?.firstName ? (review.user?.firstName + ' ' + review.user?.lastName) : 'Customer' }}
-              </span>
-            </div>
-            <p class="review-comment">{{ review.comment }}</p>
-          </div>
+      <!-- Recent orders -->
+      <section class="card recent-card">
+        <div class="card-head">
+          <h3>Recent orders</h3>
+          <a routerLink="/seller/orders" class="view-all">View all →</a>
         </div>
-        <ng-template #noReviews>
-          <div class="empty">No reviews yet</div>
-        </ng-template>
-      </div>
-    </section>
+
+        <div class="table">
+          <div class="trow header">
+            <span>Order ID</span>
+            <span>Customer</span>
+            <span>Product</span>
+            <span class="right">Amount</span>
+            <span>Status</span>
+          </div>
+          <a class="trow link"
+             *ngFor="let order of recentOrders"
+             [routerLink]="['/seller/orders', order.orderItemId]">
+            <span class="order-id">#{{ orderShortId(order) }}</span>
+            <span>{{ customerShortName(order) }}</span>
+            <span>{{ order.product?.productName }}</span>
+            <span class="right">{{ orderAmount(order) | currency:'INR':'symbol':'1.0-0' }}</span>
+            <span><span class="status-pill" [ngClass]="statusClass(order.status)">{{ statusLabel(order.status) }}</span></span>
+          </a>
+          <div class="empty" *ngIf="!recentOrders.length">No orders yet.</div>
+        </div>
+      </section>
+    </div>
   </main>
 </div>

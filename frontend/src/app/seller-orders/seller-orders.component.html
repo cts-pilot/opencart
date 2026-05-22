@@ -1,31 +1,102 @@
-<div class="seller-page">
-  <div class="page-header">
-    <h2>Seller Orders</h2>
-    <div class="nav-links">
-      <a routerLink="/seller">Dashboard</a>
-      <a routerLink="/seller/products">Products</a>
-      <a routerLink="/seller/profile">Profile</a>
+<div class="seller-container">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-mark">OC</span>
+      <span class="brand-text">Seller</span>
     </div>
-  </div>
+    <nav>
+      <a class="nav-link" routerLink="/seller"><span class="ni">▦</span> Dashboard</a>
+      <a class="nav-link" routerLink="/seller/products"><span class="ni">📦</span> Products</a>
+      <a class="nav-link active" routerLink="/seller/orders"><span class="ni">🧾</span> Orders</a>
+      <a class="nav-link" routerLink="/seller/reviews"><span class="ni">⭐</span> Reviews</a>
+      <a class="nav-link" routerLink="/seller/profile"><span class="ni">👤</span> Profile</a>
+    </nav>
+    <button class="logout" (click)="logout()">Logout</button>
+  </aside>
 
-  <div class="loading" *ngIf="isLoading">Loading orders...</div>
-  <div class="empty" *ngIf="!isLoading && !orders.length">No orders found.</div>
+  <main class="content">
+    <div class="content-card">
+      <header class="topbar">
+        <h1 class="page-title">Orders</h1>
+      </header>
 
-  <div class="order-card" *ngFor="let order of orders">
-    <img [src]="order.product.productUrl" alt="{{ order.product.productName }}">
-    <div class="order-info">
-      <h4>{{ order.product.productName }}</h4>
-      <p>
-        Customer: {{ order.order?.user?.firstName ? (order.order?.user?.firstName + ' ' + order.order?.user?.lastName) : '—' }}
-      </p>
-      <p>Qty: {{ order.qty }}</p>
-      <p>Status: <span class="status-badge">{{ order.status }}</span></p>
+      <!-- KPI cards -->
+      <section class="kpi-grid">
+        <div class="kpi">
+          <span class="kpi-label">Total orders</span>
+          <span class="kpi-value">{{ totalCount | number }}</span>
+          <span class="kpi-delta info">This month</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi-label">Pending</span>
+          <span class="kpi-value">{{ pendingCount }}</span>
+          <span class="kpi-delta warn">Needs action</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi-label">Shipped</span>
+          <span class="kpi-value">{{ shippedCount }}</span>
+          <span class="kpi-delta blue">In transit</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi-label">Cancelled</span>
+          <span class="kpi-value">{{ cancelledCount }}</span>
+          <span class="kpi-delta danger">This month</span>
+        </div>
+      </section>
+
+      <!-- Filters -->
+      <section class="filters">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Search by order ID, customer or product"
+            [(ngModel)]="searchTerm"
+            name="search"
+          />
+        </div>
+        <select class="filter-select" [(ngModel)]="statusFilter" name="statusFilter">
+          <option value="ALL">All status</option>
+          <option *ngFor="let s of statuses" [value]="s">{{ statusLabel(s) }}</option>
+        </select>
+        <select class="filter-select" [(ngModel)]="dateFilter" name="dateFilter">
+          <option value="ALL">All dates</option>
+          <option value="TODAY">Today</option>
+          <option value="WEEK">Last 7 days</option>
+          <option value="MONTH">Last 30 days</option>
+        </select>
+      </section>
+
+      <!-- Table -->
+      <div class="table card">
+        <div class="trow header">
+          <span>Order ID</span>
+          <span>Customer</span>
+          <span>Product</span>
+          <span class="right">Amount</span>
+          <span>Status</span>
+          <span>Payment</span>
+          <span class="right">Date</span>
+        </div>
+
+        <a class="trow link"
+           *ngFor="let order of filteredOrders"
+           [routerLink]="['/seller/orders', order.orderItemId]">
+          <span class="order-id">#{{ orderShortId(order) }}</span>
+          <span>{{ customerShortName(order) }}</span>
+          <span class="ellipsis">{{ order.product.productName }}</span>
+          <span class="right">{{ orderAmount(order) | currency:'INR':'symbol':'1.0-0' }}</span>
+          <span><span class="status-pill" [ngClass]="statusClass(order.status)">{{ statusLabel(order.status) }}</span></span>
+          <span><span class="status-pill" [ngClass]="paymentClass(order)">{{ paymentLabel(order) }}</span></span>
+          <span class="right">{{ formatDate(order) }}</span>
+        </a>
+
+        <div class="empty" *ngIf="!isLoading && !filteredOrders.length">
+          No orders match your filters.
+        </div>
+        <div class="empty" *ngIf="isLoading">Loading orders…</div>
+      </div>
     </div>
-    <div class="order-actions">
-      <label class="action-label">Update status</label>
-      <select [value]="order.status" (change)="updateStatus(order, $any($event.target).value)">
-        <option *ngFor="let status of statuses" [value]="status">{{ status }}</option>
-      </select>
-    </div>
-  </div>
+  </main>
 </div>

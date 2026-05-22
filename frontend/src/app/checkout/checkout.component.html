@@ -4,36 +4,106 @@
   <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
   <div class="address-section">
-    <h3>Select Address</h3>
-    <div class="loading" *ngIf="isLoading">Loading addresses...</div>
+    <h3>Select address</h3>
+    <div class="loading" *ngIf="isLoading">Loading addresses…</div>
     <div class="address-list" *ngIf="!isLoading && addresses.length">
-      <label *ngFor="let addr of addresses" class="address-card">
+      <label *ngFor="let addr of addresses" class="address-card" [class.selected]="selectedAddressId === addr.addressId">
         <input
           type="radio"
           name="address"
           [value]="addr.addressId"
           [(ngModel)]="selectedAddressId"
         />
-        <div>
+        <div class="ac-body">
           <strong>{{ addr.address }}</strong>
-          <p>{{ addr.city }}, {{ addr.country }} - {{ addr.pincode }}</p>
+          <p>{{ addr.city }}, {{ addr.country }} <span class="pincode-chip">{{ addr.pincode }}</span></p>
         </div>
       </label>
     </div>
+    <div class="empty-addr" *ngIf="!isLoading && !addresses.length">
+      <div class="empty-icon">📭</div>
+      <p>No saved addresses. Add one below to place your order.</p>
+    </div>
   </div>
 
-  <div class="address-form">
-    <h3>Add New Address</h3>
+  <div class="address-form-card">
+    <h3>
+      <span class="form-icon">+</span>
+      Add a new address
+    </h3>
+
     <div class="form-grid">
-      <input type="text" placeholder="Country" [(ngModel)]="country">
-      <input type="text" placeholder="City" [(ngModel)]="city">
-      <input type="text" placeholder="Address" [(ngModel)]="address">
-      <input type="text" placeholder="Pincode" [(ngModel)]="pincode">
+      <div class="field">
+        <label>Country</label>
+        <select [(ngModel)]="country" (change)="validatePincode()">
+          <option *ngFor="let c of countryOptions" [value]="c">{{ c }}</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>City</label>
+        <input type="text" placeholder="e.g. Chennai" [(ngModel)]="city">
+      </div>
+
+      <div class="field full">
+        <label>Street address</label>
+        <input type="text" placeholder="House no., street, area" [(ngModel)]="address">
+      </div>
+
+      <div class="field">
+        <label>Pincode</label>
+        <input
+          type="text"
+          [class.has-error]="pincodeError"
+          [placeholder]="country === 'India' ? '6-digit PIN (e.g. 600040)' : 'Postal code'"
+          [(ngModel)]="pincode"
+          (input)="validatePincode()"
+          maxlength="10"
+          inputmode="numeric"
+        >
+        <div class="field-error" *ngIf="pincodeError">
+          <span class="err-icon">!</span>{{ pincodeError }}
+        </div>
+      </div>
     </div>
-    <button type="button" (click)="addAddress()">Add Address</button>
+
+    <button type="button" class="btn-add" (click)="addAddress()">Add address</button>
+  </div>
+
+  <div class="summary-card" *ngIf="cartItems.length">
+    <h3>Order summary</h3>
+    <div class="sum-line" *ngFor="let item of cartItems">
+      <div class="sl-left">
+        <img [src]="item.product.productUrl" alt="">
+        <div>
+          <div class="sl-name">{{ item.product.productName }}</div>
+          <div class="sl-meta">
+            Qty {{ item.qty }}
+            <span class="sl-offer" *ngIf="item.product.offerPercent">{{ item.product.offerPercent }}% OFF</span>
+          </div>
+        </div>
+      </div>
+      <div class="sl-right">
+        <span class="now">{{ lineTotal(item) | currency:'INR':'symbol' }}</span>
+        <span class="was" *ngIf="item.product.offerPercent">{{ lineOriginal(item) | currency:'INR':'symbol' }}</span>
+      </div>
+    </div>
+
+    <div class="sum-row" *ngIf="totalSavings > 0">
+      <span>Subtotal</span>
+      <span>{{ subtotalOriginal | currency:'INR':'symbol' }}</span>
+    </div>
+    <div class="sum-row savings" *ngIf="totalSavings > 0">
+      <span>Offer savings</span>
+      <span>- {{ totalSavings | currency:'INR':'symbol' }}</span>
+    </div>
+    <div class="sum-row total">
+      <span>Total payable</span>
+      <strong>{{ total | currency:'INR':'symbol' }}</strong>
+    </div>
   </div>
 
   <div class="checkout-actions">
-    <button type="button" class="primary" (click)="placeOrder()">Place Order</button>
+    <button type="button" class="primary" (click)="placeOrder()">Place order</button>
   </div>
 </div>

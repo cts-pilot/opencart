@@ -1,66 +1,247 @@
-<div class="seller-page">
-  <div class="page-header">
-    <h2>My Products</h2>
-    <div class="nav-links">
-      <a routerLink="/seller">Dashboard</a>
-      <a routerLink="/seller/orders">Orders</a>
-      <a routerLink="/seller/profile">Profile</a>
+<div class="seller-container">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-mark">OC</span>
+      <span class="brand-text">Seller</span>
     </div>
-  </div>
+    <nav>
+      <a class="nav-link" routerLink="/seller"><span class="ni">▦</span> Dashboard</a>
+      <a class="nav-link active" routerLink="/seller/products"><span class="ni">📦</span> Products</a>
+      <a class="nav-link" routerLink="/seller/orders"><span class="ni">🧾</span> Orders</a>
+      <a class="nav-link" routerLink="/seller/reviews"><span class="ni">⭐</span> Reviews</a>
+      <a class="nav-link" routerLink="/seller/profile"><span class="ni">👤</span> Profile</a>
+    </nav>
+    <button class="logout" (click)="logout()">Logout</button>
+  </aside>
 
-  <div class="product-form">
-    <h3>{{ editingProductId ? 'Edit Product' : 'Add Product' }}</h3>
-    <div class="error" *ngIf="errorMessage">{{ errorMessage }}</div>
-    <div class="form-grid">
-      <input type="text" placeholder="Product Name" [(ngModel)]="productName">
-      <input type="text" placeholder="Image URL" [(ngModel)]="productUrl">
-      <input type="number" placeholder="Price" [(ngModel)]="price">
-      <input type="number" placeholder="Stock" [(ngModel)]="stock">
-      <select [(ngModel)]="categoryId">
-        <option [ngValue]="null">Select Category</option>
-        <option *ngFor="let category of categories" [value]="category.categoryId">
-          {{ category.categoryName }}
-        </option>
-      </select>
-    </div>
-    <div class="form-actions">
-      <button type="button" class="primary" (click)="saveProduct()">
-        {{ editingProductId ? 'Update' : 'Add' }}
-      </button>
-      <button type="button" class="secondary" (click)="resetForm()" *ngIf="editingProductId">Cancel</button>
-    </div>
-  </div>
+  <main class="content">
+    <div class="content-card">
+      <header class="topbar">
+        <div>
+          <h1 class="page-title">Products</h1>
+          <p class="page-sub">Manage your catalog, stock and offers.</p>
+        </div>
+        <div class="topbar-actions">
+          <button type="button" class="btn-ghost" (click)="openAddOffer()">
+            <span class="btn-icon">🏷️</span> Add offer
+          </button>
+          <button type="button" class="btn-primary" (click)="openAddProduct()">
+            <span class="btn-icon">＋</span> Add product
+          </button>
+        </div>
+      </header>
 
-  <div class="product-list">
-    <div class="list-header">
-      <h3>Current Products</h3>
-      <div class="filter">
-        <label for="categoryFilter">Category</label>
-        <select id="categoryFilter" [(ngModel)]="selectedCategoryId">
-          <option [ngValue]="null">All</option>
-          <option *ngFor="let category of categories" [ngValue]="category.categoryId">
-            {{ category.categoryName }}
-          </option>
+      <!-- KPI strip -->
+      <section class="kpi-grid">
+        <div class="kpi">
+          <span class="kpi-label">Total products</span>
+          <span class="kpi-value">{{ totalProducts | number }}</span>
+          <span class="kpi-delta info">In your catalog</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi-label">In stock</span>
+          <span class="kpi-value">{{ inStockCount }}</span>
+          <span class="kpi-delta info">Healthy levels</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi-label">Low stock</span>
+          <span class="kpi-value">{{ lowStockCount }}</span>
+          <span class="kpi-delta warn">Needs restock</span>
+        </div>
+        <div class="kpi">
+          <span class="kpi-label">Out of stock</span>
+          <span class="kpi-value">{{ outOfStockCount }}</span>
+          <span class="kpi-delta danger">Unavailable</span>
+        </div>
+      </section>
+
+      <!-- Filters -->
+      <section class="filters">
+        <div class="search-wrap">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Search by product name"
+            [(ngModel)]="searchTerm"
+            name="search"
+          />
+        </div>
+        <select class="filter-select" [(ngModel)]="selectedCategoryId" name="categoryFilter">
+          <option [ngValue]="null">All categories</option>
+          <option *ngFor="let c of categories" [ngValue]="c.categoryId">{{ c.categoryName }}</option>
         </select>
+        <select class="filter-select" [(ngModel)]="stockFilter" name="stockFilter">
+          <option value="ALL">All stock</option>
+          <option value="IN">In stock</option>
+          <option value="LOW">Low stock (1–5)</option>
+          <option value="OUT">Out of stock</option>
+        </select>
+      </section>
+
+      <!-- Table -->
+      <div class="table card">
+        <div class="trow header">
+          <span>Product</span>
+          <span>Category</span>
+          <span class="right">Price</span>
+          <span class="right">Stock</span>
+          <span>Status</span>
+          <span>Offer</span>
+          <span class="right">Actions</span>
+        </div>
+
+        <div class="trow" *ngFor="let product of filteredProducts">
+          <span class="product-cell">
+            <img class="thumb" [src]="product.productUrl" [alt]="product.productName">
+            <span class="prod-name">{{ product.productName }}</span>
+          </span>
+          <span class="muted">{{ product.category?.categoryName || '—' }}</span>
+          <span class="right">
+            <ng-container *ngIf="offerFor(product); else noOfferPrice">
+              <span class="price-now">{{ discountedPrice(product) | currency:'INR':'symbol':'1.0-0' }}</span>
+              <span class="price-was">{{ product.price | currency:'INR':'symbol':'1.0-0' }}</span>
+            </ng-container>
+            <ng-template #noOfferPrice>
+              <span class="price-now">{{ product.price | currency:'INR':'symbol':'1.0-0' }}</span>
+            </ng-template>
+          </span>
+          <span class="right">
+            <input
+              type="number"
+              class="stock-input"
+              [value]="product.stock"
+              (change)="updateStock(product, $any($event.target).value)"
+              min="0"
+              title="Update stock"
+            />
+          </span>
+          <span>
+            <span class="status-pill" [ngClass]="stockStatus(product.stock).cls">
+              {{ stockStatus(product.stock).label }}
+            </span>
+          </span>
+          <span>
+            <span class="offer-pill" *ngIf="offerFor(product) as offer; else noOffer">
+              {{ offer.discount }}% OFF
+            </span>
+            <ng-template #noOffer><span class="muted">—</span></ng-template>
+          </span>
+          <span class="actions right">
+            <button type="button" class="row-btn edit" (click)="startEdit(product)" title="Edit">✎</button>
+            <button type="button" class="row-btn danger" (click)="deleteProduct(product.productId)" title="Delete">🗑</button>
+          </span>
+        </div>
+
+        <div class="empty" *ngIf="!isLoading && !filteredProducts.length">
+          No products match your filters.
+        </div>
+        <div class="empty" *ngIf="isLoading">Loading products…</div>
       </div>
     </div>
-    <div class="loading" *ngIf="isLoading">Loading products...</div>
-    <div class="empty" *ngIf="!isLoading && !products.length">No products found.</div>
+  </main>
+</div>
 
-    <div class="product-card" *ngFor="let product of filteredProducts">
-      <img [src]="product.productUrl" alt="{{ product.productName }}">
-      <div class="product-info">
-        <h4>{{ product.productName }}</h4>
-        <p>{{ product.price | currency:'INR':'symbol' }}</p>
-        <p>Stock: {{ product.stock }}</p>
-        <div class="stock-edit">
-          <input type="number" [value]="product.stock" (change)="updateStock(product, $any($event.target).value)">
+<!-- ===== PRODUCT MODAL ===== -->
+<div class="modal-backdrop" *ngIf="productModalOpen" (click)="closeProductModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <header class="modal-head">
+      <h2>{{ editingProductId ? 'Edit product' : 'Add product' }}</h2>
+      <button type="button" class="modal-close" (click)="closeProductModal()" aria-label="Close">×</button>
+    </header>
+
+    <div class="modal-body">
+      <div class="error-alert" *ngIf="errorMessage">
+        <span class="error-icon">!</span><span>{{ errorMessage }}</span>
+      </div>
+
+      <div class="preview-strip" *ngIf="productUrl">
+        <img [src]="productUrl" alt="Preview" (error)="$any($event.target).style.display='none'">
+      </div>
+
+      <div class="form-grid">
+        <div class="field full">
+          <label>Product name</label>
+          <input type="text" [(ngModel)]="productName" placeholder="e.g. Running Shoes Pro">
+        </div>
+
+        <div class="field full">
+          <label>Image URL</label>
+          <input type="text" [(ngModel)]="productUrl" placeholder="https://…">
+        </div>
+
+        <div class="field">
+          <label>Price (₹)</label>
+          <input type="number" [(ngModel)]="price" placeholder="0" min="0">
+        </div>
+
+        <div class="field">
+          <label>Stock</label>
+          <input type="number" [(ngModel)]="stock" placeholder="0" min="0">
+        </div>
+
+        <div class="field full">
+          <label>Category</label>
+          <select [(ngModel)]="categoryId">
+            <option [ngValue]="null">Select category</option>
+            <option *ngFor="let c of categories" [ngValue]="c.categoryId">{{ c.categoryName }}</option>
+          </select>
         </div>
       </div>
-      <div class="actions">
-        <button type="button" (click)="startEdit(product)">Edit</button>
-        <button type="button" class="danger" (click)="deleteProduct(product.productId)">Delete</button>
+    </div>
+
+    <footer class="modal-foot">
+      <button type="button" class="btn-ghost" (click)="closeProductModal()">Cancel</button>
+      <button type="button" class="btn-primary" (click)="saveProduct()">
+        {{ editingProductId ? 'Save changes' : 'Add product' }}
+      </button>
+    </footer>
+  </div>
+</div>
+
+<!-- ===== OFFER MODAL ===== -->
+<div class="modal-backdrop" *ngIf="offerModalOpen" (click)="closeOfferModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <header class="modal-head">
+      <h2>Create offer</h2>
+      <button type="button" class="modal-close" (click)="closeOfferModal()" aria-label="Close">×</button>
+    </header>
+
+    <div class="modal-body">
+      <p class="hint">Apply a percentage discount to one of your products. The discount appears as a badge on the storefront.</p>
+
+      <div class="error-alert" *ngIf="offerError">
+        <span class="error-icon">!</span><span>{{ offerError }}</span>
+      </div>
+
+      <div class="form-grid">
+        <div class="field full">
+          <label>Product</label>
+          <select [(ngModel)]="offerProductId">
+            <option [ngValue]="null">Select product</option>
+            <option *ngFor="let p of products" [ngValue]="p.productId">
+              {{ p.productName }} — {{ p.price | currency:'INR':'symbol':'1.0-0' }}
+            </option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Discount (%)</label>
+          <input type="number" [(ngModel)]="offerDiscount" placeholder="10" min="1" max="90">
+        </div>
+
+        <div class="field">
+          <label>Valid until</label>
+          <input type="date" [(ngModel)]="offerValidUntil">
+        </div>
       </div>
     </div>
+
+    <footer class="modal-foot">
+      <button type="button" class="btn-ghost" (click)="closeOfferModal()">Cancel</button>
+      <button type="button" class="btn-primary" (click)="saveOffer()" [disabled]="isSavingOffer">
+        {{ isSavingOffer ? 'Saving…' : 'Apply offer' }}
+      </button>
+    </footer>
   </div>
 </div>

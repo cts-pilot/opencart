@@ -7,7 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import com.OpenCart.backend.service.UserService;
+import com.OpenCart.backend.service.PasswordResetService;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ┌─────────────────────────────────────────────────────────────┐
@@ -25,6 +27,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PasswordResetService passwordResetService;
 
     // ═══════════════════════════════════════════════════════════════
     //  AUTH  (public)
@@ -48,6 +53,31 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest req) {
         return ResponseEntity.ok(userService.login(req));
+    }
+
+    /**
+     * POST /api/user/forgot-password
+     * Body : { email }
+     * Always returns 200 — even for unknown emails — to avoid leaking which
+     * accounts exist. When the email is known, a reset link is sent.
+     */
+    @PostMapping("/forgot-password")
+    public ResponseEntity<Map<String, String>> forgotPassword(@RequestBody ForgotPasswordRequest req) {
+        passwordResetService.requestPasswordReset(req);
+        return ResponseEntity.ok(Map.of(
+                "message",
+                "If an account exists for that email, a reset link has been sent."
+        ));
+    }
+
+    /**
+     * POST /api/user/reset-password
+     * Body : { token, newPassword }
+     */
+    @PostMapping("/reset-password")
+    public ResponseEntity<Map<String, String>> resetPassword(@RequestBody ResetPasswordRequest req) {
+        passwordResetService.resetPassword(req);
+        return ResponseEntity.ok(Map.of("message", "Password has been reset. You can now sign in."));
     }
 
     // ═══════════════════════════════════════════════════════════════

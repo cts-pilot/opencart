@@ -1,44 +1,66 @@
-<div class="login-container">
-  <div class="login-wrapper">
-    <div class="login-card">
-      <div class="card-header">
-        <h2>Sign In</h2>
-        <p class="subtitle">Sign in to your account</p>
-      </div>
+<div class="auth-page">
+  <!-- LEFT: brand panel -->
+  <aside class="auth-brand">
+    <a class="brand-logo" routerLink="/">OpenCart</a>
 
-      <form (ngSubmit)="login()" class="login-form">
-        <div class="error-alert" *ngIf="errorMessage">
+    <div class="brand-body">
+      <h1>Welcome back.</h1>
+      <p class="brand-tag">Sign in to pick up where you left off — your cart, wishlist and orders are waiting.</p>
+
+      <ul class="brand-features">
+        <li><span class="dot"></span> Fast, secure checkout</li>
+        <li><span class="dot"></span> Track every order in real time</li>
+        <li><span class="dot"></span> Save favourites to your wishlist</li>
+      </ul>
+    </div>
+
+    <div class="brand-footer">© {{ year }} OpenCart</div>
+  </aside>
+
+  <!-- RIGHT: form panel -->
+  <main class="auth-form-panel">
+    <div class="auth-form-wrap">
+      <header class="auth-form-head">
+        <h2>Sign in</h2>
+        <p>Enter your credentials to access your account.</p>
+      </header>
+
+      <form (ngSubmit)="login()" class="auth-form" novalidate>
+        <div class="error-alert" *ngIf="errorMessage" role="alert">
           <span class="error-icon">!</span>
           <span>{{ errorMessage }}</span>
         </div>
 
-        <div class="form-group">
-          <label for="email">E-Mail Address</label>
+        <div class="field">
+          <label for="email">Email address</label>
           <input
             type="email"
-            class="form-control"
             id="email"
             name="email"
             [(ngModel)]="email"
-            placeholder="your.email@example.com"
+            placeholder="you@example.com"
+            autocomplete="email"
             required
           />
         </div>
 
-        <div class="form-group">
-          <label for="password">Password</label>
-          <div class="password-input-wrapper">
+        <div class="field">
+          <div class="field-label-row">
+            <label for="password">Password</label>
+            <a class="forgot-link" routerLink="/forgot-password">Forgot password?</a>
+          </div>
+          <div class="password-wrap">
             <input
               [type]="showPassword ? 'text' : 'password'"
-              class="form-control"
               id="password"
               name="password"
               [(ngModel)]="password"
-              placeholder="Enter your password"
+              placeholder="Your password"
+              autocomplete="current-password"
               required
             />
-            <button 
-              type="button" 
+            <button
+              type="button"
               class="toggle-password"
               (click)="togglePasswordVisibility()"
               tabindex="-1"
@@ -49,18 +71,18 @@
           </div>
         </div>
 
-        <button 
-          type="submit" 
-          class="btn-login"
+        <button
+          type="submit"
+          class="btn-primary"
           [disabled]="!email || !password || isSubmitting"
         >
-          {{ isSubmitting ? 'Signing In...' : 'Sign In' }}
+          {{ isSubmitting ? 'Signing in…' : 'Sign in' }}
         </button>
       </form>
 
-      <div class="register-link">
-        <p>Don't have an account? <a routerLink="/register">Register here</a></p>
-      </div>
+      <p class="auth-alt">
+        New to OpenCart? <a routerLink="/register">Create an account</a>
+      </p>
     </div>
-  </div>
+  </main>
 </div>

@@ -1,86 +1,130 @@
 <div class="profile-container">
   <div class="profile-wrapper">
+    <!-- Hero banner -->
+    <section class="profile-hero">
+      <div class="hero-avatar">{{ (firstName || userEmail || '?').charAt(0).toUpperCase() }}</div>
+      <div class="hero-info">
+        <span class="role-pill">Customer account</span>
+        <h1 class="hero-name">{{ (firstName + ' ' + lastName).trim() || 'Your profile' }}</h1>
+        <p class="hero-meta">
+          <span>✉️ {{ userEmail || '—' }}</span>
+          <span class="dot">·</span>
+          <span>📦 {{ addresses.length }} saved address<span *ngIf="addresses.length !== 1">es</span></span>
+        </p>
+      </div>
+      <button class="hero-logout" (click)="logout()" title="Logout">⎋ Logout</button>
+    </section>
+
     <div class="profile-card">
       <div class="card-header">
-        <h2>My Profile</h2>
-        <p class="subtitle">View and manage your account</p>
+        <h2>Personal information</h2>
+        <p class="subtitle">Update your name and email below.</p>
       </div>
 
       <div class="profile-content">
-        <div class="info-section">
-          <label>E-Mail Address</label>
-          <input class="info-input" [(ngModel)]="userEmail" />
-        </div>
+        <div class="form-grid">
+          <div class="info-section">
+            <label>First name</label>
+            <input class="info-input" [(ngModel)]="firstName" placeholder="John" />
+          </div>
 
-        <div class="info-section">
-          <label>First Name</label>
-          <input class="info-input" [(ngModel)]="firstName" />
-        </div>
+          <div class="info-section">
+            <label>Last name</label>
+            <input class="info-input" [(ngModel)]="lastName" placeholder="Doe" />
+          </div>
 
-        <div class="info-section">
-          <label>Last Name</label>
-          <input class="info-input" [(ngModel)]="lastName" />
+          <div class="info-section full">
+            <label>Email address</label>
+            <input class="info-input" type="email" [(ngModel)]="userEmail" placeholder="you@example.com" />
+          </div>
         </div>
       </div>
 
-      <div class="message" *ngIf="message">{{ message }}</div>
+      <div class="alert" *ngIf="message">
+        <span class="alert-icon">✓</span>
+        <span>{{ message }}</span>
+      </div>
 
       <div class="button-group">
-        <button class="btn-save" (click)="saveProfile()">Save</button>
-        <button class="btn-logout" (click)="logout()">Logout</button>
+        <button class="btn-save" (click)="saveProfile()">Save changes</button>
       </div>
     </div>
 
     <div class="profile-card address-card">
       <div class="card-header">
-        <h2>Delivery Addresses</h2>
-        <p class="subtitle">Manage shipping information</p>
+        <h2>Delivery addresses</h2>
+        <p class="subtitle">Manage where your orders are shipped.</p>
       </div>
 
       <div class="profile-content">
         <div class="address-list" *ngIf="addresses.length; else emptyAddresses">
           <div class="address-item" *ngFor="let address of addresses">
-            <div>
+            <div class="addr-icon">📍</div>
+            <div class="addr-body">
               <h4>{{ address.address }}</h4>
-              <p>{{ address.city }}, {{ address.country }} - {{ address.pincode }}</p>
+              <p>{{ address.city }}, {{ address.country }} <span class="pincode-chip">{{ address.pincode }}</span></p>
             </div>
             <div class="address-actions">
-              <button class="btn-secondary" (click)="editAddress(address)">Edit</button>
-              <button class="btn-danger" (click)="deleteAddress(address.addressId)">Delete</button>
+              <button class="btn-icon-edit" (click)="editAddress(address)" title="Edit">✎</button>
+              <button class="btn-icon-del"  (click)="deleteAddress(address.addressId)" title="Delete">🗑</button>
             </div>
           </div>
         </div>
 
         <ng-template #emptyAddresses>
-          <p class="empty-state">No saved addresses yet.</p>
+          <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <h4>No saved addresses yet</h4>
+            <p>Add your first address below to speed up checkout.</p>
+          </div>
         </ng-template>
 
-        <div class="address-form">
-          <h3>{{ editingAddressId ? 'Edit Address' : 'Add New Address' }}</h3>
+        <div class="address-form-card">
+          <h3>
+            <span class="form-icon">{{ editingAddressId ? '✎' : '+' }}</span>
+            {{ editingAddressId ? 'Edit address' : 'Add a new address' }}
+          </h3>
+
           <div class="form-grid">
             <div class="info-section">
               <label>Country</label>
-              <input class="info-input" [(ngModel)]="addressCountry" />
+              <select class="info-input" [(ngModel)]="addressCountry" (change)="validatePincode()">
+                <option *ngFor="let c of countryOptions" [value]="c">{{ c }}</option>
+              </select>
             </div>
+
             <div class="info-section">
               <label>City</label>
-              <input class="info-input" [(ngModel)]="addressCity" />
+              <input class="info-input" [(ngModel)]="addressCity" placeholder="e.g. Chennai" />
             </div>
+
             <div class="info-section full">
-              <label>Address</label>
-              <input class="info-input" [(ngModel)]="addressLine" />
+              <label>Street address</label>
+              <input class="info-input" [(ngModel)]="addressLine" placeholder="House no., street, area" />
             </div>
+
             <div class="info-section">
               <label>Pincode</label>
-              <input class="info-input" [(ngModel)]="addressPincode" />
+              <input
+                class="info-input"
+                [class.has-error]="pincodeError"
+                [(ngModel)]="addressPincode"
+                (input)="validatePincode()"
+                [placeholder]="addressCountry === 'India' ? '6-digit PIN (e.g. 600040)' : 'Postal code'"
+                maxlength="10"
+                inputmode="numeric"
+              />
+              <div class="field-error" *ngIf="pincodeError">
+                <span class="err-icon">!</span>{{ pincodeError }}
+              </div>
             </div>
           </div>
 
-          <div class="message" *ngIf="addressMessage">{{ addressMessage }}</div>
+          <div class="alert" *ngIf="addressMessage">{{ addressMessage }}</div>
 
           <div class="button-group">
             <button class="btn-save" (click)="saveAddress()">
-              {{ editingAddressId ? 'Update Address' : 'Add Address' }}
+              {{ editingAddressId ? 'Update address' : 'Save address' }}
             </button>
             <button class="btn-secondary" *ngIf="editingAddressId" (click)="cancelAddressEdit()">
               Cancel

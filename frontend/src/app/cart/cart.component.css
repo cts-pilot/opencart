@@ -31,6 +31,55 @@
 .item-info h4 {
   margin: 0 0 6px;
 }
+.item-price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.item-price .now,
+.item-total .now {
+  font-weight: 700;
+  color: #0f172a;
+}
+.item-price .was,
+.item-total .was {
+  font-size: 12.5px;
+  color: #94a3b8;
+  text-decoration: line-through;
+}
+.item-total {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  font-weight: 700;
+  color: #0f172a;
+}
+.offer-tag {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #fbbf24, #d97706);
+  color: #0f172a;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.summary-row.savings {
+  color: #047857;
+  font-weight: 600;
+}
+.summary-row.total {
+  padding-top: 10px;
+  border-top: 1px solid #e2e8f0;
+  font-size: 15px;
+}
+.summary-row.total strong {
+  font-size: 18px;
+  color: #b45309;
+}
 
 .qty-controls {
   display: flex;

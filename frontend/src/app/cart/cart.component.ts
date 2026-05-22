@@ -2,8 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../user.service';
-import { CartItem } from '../api.types';
+import { CartItem, Product } from '../api.types';
 import { AuthService } from '../auth.service';
+import { OfferService } from '../offer.service';
 
 @Component({
   selector: 'app-cart',
@@ -20,8 +21,40 @@ export class CartComponent implements OnInit {
   constructor(
     private userService: UserService,
     private authService: AuthService,
+    private offerService: OfferService,
     private router: Router
   ) {}
+
+  unitPrice(product: Product): number {
+    return this.offerService.discountedPrice(product);
+  }
+
+  hasOffer(product: Product): boolean {
+    return !!this.offerService.forProduct(product);
+  }
+
+  lineTotal(item: CartItem): number {
+    return this.unitPrice(item.product) * item.qty;
+  }
+
+  lineOriginal(item: CartItem): number {
+    return item.product.price * item.qty;
+  }
+
+  offerPercent(product: Product): number | null {
+    return this.offerService.forProduct(product)?.discount ?? null;
+  }
+
+  get subtotalOriginal(): number {
+    return this.items.reduce((sum, item) => sum + this.lineOriginal(item), 0);
+  }
+
+  get totalSavings(): number {
+    return this.items.reduce(
+      (sum, item) => sum + (this.lineOriginal(item) - this.lineTotal(item)),
+      0
+    );
+  }
 
   ngOnInit(): void {
     if (!this.ensureUserAccess()) {
@@ -98,7 +131,7 @@ export class CartComponent implements OnInit {
   }
 
   get total(): number {
-    return this.items.reduce((sum, item) => sum + item.product.price * item.qty, 0);
+    return this.items.reduce((sum, item) => sum + this.lineTotal(item), 0);
   }
 
   trackByCartItem(index: number, item: CartItem): number {

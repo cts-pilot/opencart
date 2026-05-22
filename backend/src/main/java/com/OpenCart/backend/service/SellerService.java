@@ -138,6 +138,20 @@ public class SellerService {
         return productRepository.save(product);
     }
 
+    public Product updateOffer(String userId, Long productId, com.OpenCart.backend.dto.OfferRequest req) {
+        Seller seller = getSellerByUserId(userId);
+        Product product = getOwnedProduct(seller, productId);
+
+        Integer percent = req.getOfferPercent();
+        if (percent != null && (percent <= 0 || percent > 90)) {
+            throw new RuntimeException("Offer percent must be between 1 and 90");
+        }
+
+        product.setOfferPercent(percent);
+        product.setOfferValidUntil(req.getOfferValidUntil());
+        return productRepository.save(product);
+    }
+
     // ═══════════════════════════════════════════════════════════════
     //  ORDERS
     // ═══════════════════════════════════════════════════════════════

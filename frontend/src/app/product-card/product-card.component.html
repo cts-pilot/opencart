@@ -1,18 +1,36 @@
-<div class="card">
-  <a [routerLink]="['/product', product.productId]">
-    <img [src]="product.productUrl" alt="{{ product.productName }}">
+<div class="card" [class.out-of-stock]="product.stock === 0">
+  <a class="image-link" [routerLink]="['/product', product.productId]">
+    <div class="image-frame">
+      <img [src]="product.productUrl" alt="{{ product.productName }}" loading="lazy">
+      <span class="offer-ribbon" *ngIf="offer">{{ offer.discount }}% OFF</span>
+      <span class="stock-badge" *ngIf="product.stock > 0 && product.stock <= 5">Only {{ product.stock }} left</span>
+      <span class="stock-badge out" *ngIf="product.stock === 0">Out of stock</span>
+      <div class="hover-overlay">
+        <span class="view-pill">View details</span>
+      </div>
+    </div>
   </a>
 
-  <h4>{{ product.productName }}</h4>
-  <p>In stock: {{ product.stock }}</p>
-
-  <div>
-    <b>{{ product.price | currency:'INR':'symbol' }}</b>
+  <div class="card-body">
+    <h4 class="title" [title]="product.productName">{{ product.productName }}</h4>
+    <div class="meta-row">
+      <span class="price-block">
+        <span class="price">{{ discountedPrice | currency:'INR':'symbol' }}</span>
+        <span class="price-was" *ngIf="offer">{{ product.price | currency:'INR':'symbol' }}</span>
+      </span>
+      <span class="stock" *ngIf="product.stock > 0">In stock</span>
+    </div>
   </div>
 
   <div class="actions">
-    <button type="button" (click)="addToCart.emit(product)">🛒</button>
-    <button type="button" (click)="addToWishlist.emit(product)">❤️</button>
-    <button type="button" [routerLink]="['/product', product.productId]">🔍</button>
+    <button type="button" class="action cart" (click)="addToCart.emit(product)" [disabled]="product.stock === 0" aria-label="Add to cart">
+      <span class="icon">🛒</span><span class="label">Add</span>
+    </button>
+    <button type="button" class="action wish" (click)="addToWishlist.emit(product)" aria-label="Add to wishlist">
+      <span class="icon">❤</span>
+    </button>
+    <button type="button" class="action view" [routerLink]="['/product', product.productId]" aria-label="View details">
+      <span class="icon">🔍</span>
+    </button>
   </div>
 </div>

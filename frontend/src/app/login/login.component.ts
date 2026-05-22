@@ -18,6 +18,7 @@ export class LoginComponent {
         errorMessage = '';
         showPassword = false;
   isSubmitting = false;
+  year = new Date().getFullYear();
 
   constructor(private router: Router, private authService: AuthService){}
 

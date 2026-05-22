@@ -11,6 +11,8 @@ export interface Product {
   stock: number;
   category?: Category;
   seller?: SellerProfile;
+  offerPercent?: number | null;
+  offerValidUntil?: string | null;
 }
 
 export interface Review {
@@ -50,9 +52,15 @@ export interface OrderItem {
   qty: number;
   status: string;
   product: Product;
+  /** Frozen unit price captured at order placement. */
+  unitPrice?: number | null;
+  /** Frozen offer percent captured at order placement. */
+  offerPercent?: number | null;
   order?: {
     orderId?: number;
+    createdAt?: string;
     user?: UserProfile;
+    address?: Address;
   };
 }
 

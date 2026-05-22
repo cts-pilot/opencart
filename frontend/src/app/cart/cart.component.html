@@ -3,7 +3,7 @@
 
   <div class="action-error" *ngIf="errorMessage">{{ errorMessage }}</div>
 
-  <div class="loading" *ngIf="isLoading">Loading cart...</div>
+  <div class="loading" *ngIf="isLoading">Loading cart…</div>
 
   <div class="empty" *ngIf="!isLoading && !items.length">
     <p>Your cart is empty.</p>
@@ -15,20 +15,35 @@
       <img [src]="item.product.productUrl" alt="{{ item.product.productName }}">
       <div class="item-info">
         <h4>{{ item.product.productName }}</h4>
-        <p>{{ item.product.price | currency:'INR':'symbol' }}</p>
+        <div class="item-price">
+          <span class="now">{{ unitPrice(item.product) | currency:'INR':'symbol' }}</span>
+          <span class="was" *ngIf="hasOffer(item.product)">{{ item.product.price | currency:'INR':'symbol' }}</span>
+          <span class="offer-tag" *ngIf="hasOffer(item.product)">{{ offerPercent(item.product) }}% OFF</span>
+        </div>
       </div>
       <div class="qty-controls">
         <button type="button" (click)="updateQty(item, item.qty - 1)">-</button>
         <span>{{ item.qty }}</span>
         <button type="button" (click)="updateQty(item, item.qty + 1)">+</button>
       </div>
-      <div class="item-total">{{ item.product.price * item.qty | currency:'INR':'symbol' }}</div>
+      <div class="item-total">
+        <span class="now">{{ lineTotal(item) | currency:'INR':'symbol' }}</span>
+        <span class="was" *ngIf="hasOffer(item.product)">{{ lineOriginal(item) | currency:'INR':'symbol' }}</span>
+      </div>
       <button type="button" class="remove" (click)="removeItem(item)">Remove</button>
     </div>
 
     <div class="cart-summary">
-      <div class="summary-row">
-        <span>Total</span>
+      <div class="summary-row" *ngIf="totalSavings > 0">
+        <span>Subtotal</span>
+        <span>{{ subtotalOriginal | currency:'INR':'symbol' }}</span>
+      </div>
+      <div class="summary-row savings" *ngIf="totalSavings > 0">
+        <span>Offer savings</span>
+        <span>- {{ totalSavings | currency:'INR':'symbol' }}</span>
+      </div>
+      <div class="summary-row total">
+        <span>Total payable</span>
         <strong>{{ total | currency:'INR':'symbol' }}</strong>
       </div>
       <div class="summary-actions">

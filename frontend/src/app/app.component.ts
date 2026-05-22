@@ -40,9 +40,19 @@ export class AppComponent implements OnInit, OnDestroy {
     this.routerSubscription?.unsubscribe();
   }
 
+  get isAuthPage(): boolean {
+    return this.currentRoute.includes('/login')
+        || this.currentRoute.includes('/register')
+        || this.currentRoute.includes('/forgot-password')
+        || this.currentRoute.includes('/reset-password');
+  }
+
+  get showHeader(): boolean {
+    return !this.isAuthPage;
+  }
+
   get showNavbar(): boolean {
-    const isAuthPage = this.currentRoute.includes('/login') || this.currentRoute.includes('/register');
     const isSellerRole = this.currentUser?.role === 'seller';
-    return !isAuthPage && !isSellerRole;
+    return !this.isAuthPage && !isSellerRole;
   }
 }

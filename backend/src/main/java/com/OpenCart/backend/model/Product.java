@@ -1,6 +1,7 @@
 package com.OpenCart.backend.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "product")
@@ -29,6 +30,12 @@ public class Product {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    @Column(name = "offer_percent")
+    private Integer offerPercent;
+
+    @Column(name = "offer_valid_until")
+    private LocalDate offerValidUntil;
+
     // Getters and Setters
     public Long getProductId() { return productId; }
     public void setProductId(Long productId) { this.productId = productId; }
@@ -50,4 +57,10 @@ public class Product {
 
     public Category getCategory() { return category; }
     public void setCategory(Category category) { this.category = category; }
+
+    public Integer getOfferPercent() { return offerPercent; }
+    public void setOfferPercent(Integer offerPercent) { this.offerPercent = offerPercent; }
+
+    public LocalDate getOfferValidUntil() { return offerValidUntil; }
+    public void setOfferValidUntil(LocalDate offerValidUntil) { this.offerValidUntil = offerValidUntil; }
 }

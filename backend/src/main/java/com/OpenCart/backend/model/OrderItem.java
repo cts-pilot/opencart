@@ -22,6 +22,12 @@ public class OrderItem {
     private Integer qty;
     private String status;
 
+    @Column(name = "unit_price")
+    private Double unitPrice;
+
+    @Column(name = "offer_percent")
+    private Integer offerPercent;
+
     // Getters and Setters
     public Long getOrderItemId() { return orderItemId; }
     public void setOrderItemId(Long orderItemId) { this.orderItemId = orderItemId; }
@@ -38,5 +44,9 @@ public class OrderItem {
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
 
+    public Double getUnitPrice() { return unitPrice; }
+    public void setUnitPrice(Double unitPrice) { this.unitPrice = unitPrice; }
 
+    public Integer getOfferPercent() { return offerPercent; }
+    public void setOfferPercent(Integer offerPercent) { this.offerPercent = offerPercent; }
 }

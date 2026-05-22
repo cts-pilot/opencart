@@ -1,0 +1,131 @@
+<div class="seller-container">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-mark">OC</span>
+      <span class="brand-text">Seller</span>
+    </div>
+    <nav>
+      <a class="nav-link" routerLink="/seller"><span class="ni">▦</span> Dashboard</a>
+      <a class="nav-link" routerLink="/seller/products"><span class="ni">📦</span> Products</a>
+      <a class="nav-link active" routerLink="/seller/orders"><span class="ni">🧾</span> Orders</a>
+      <a class="nav-link" routerLink="/seller/reviews"><span class="ni">⭐</span> Reviews</a>
+      <a class="nav-link" routerLink="/seller/profile"><span class="ni">👤</span> Profile</a>
+    </nav>
+    <button class="logout" (click)="logout()">Logout</button>
+  </aside>
+
+  <main class="content">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a routerLink="/seller/orders">Orders</a>
+      <span class="sep">/</span>
+      <span class="current">{{ shortOrderId }}</span>
+    </nav>
+
+    <a class="back-link" routerLink="/seller/orders">← Back to orders</a>
+
+    <div class="state" *ngIf="isLoading">Loading order…</div>
+    <div class="state error" *ngIf="!isLoading && errorMessage">{{ errorMessage }}</div>
+
+    <div class="grid" *ngIf="!isLoading && order">
+      <!-- LEFT: Order info card -->
+      <section class="card info-card">
+        <h2 class="card-title">Order info</h2>
+
+        <div class="info-row">
+          <span class="info-label">Order ID</span>
+          <span class="info-value link">{{ shortOrderId }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Customer</span>
+          <span class="info-value">{{ customerFullName }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Product</span>
+          <span class="info-value">{{ order.product.productName }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Qty</span>
+          <span class="info-value">{{ order.qty }} × unit</span>
+        </div>
+        <div class="info-row" *ngIf="hasFrozenOffer">
+          <span class="info-label">Offer applied</span>
+          <span class="info-value"><span class="pill pm-cod">{{ order.offerPercent }}% OFF</span></span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Amount</span>
+          <span class="info-value">
+            {{ amount | currency:'INR':'symbol':'1.0-0' }}
+            <span class="was-amount" *ngIf="hasFrozenOffer">{{ amountOriginal | currency:'INR':'symbol':'1.0-0' }}</span>
+          </span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Payment</span>
+          <span class="info-value"><span class="pill" [ngClass]="paymentClass">{{ paymentLabel }}</span></span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Status</span>
+          <span class="info-value"><span class="pill" [ngClass]="statusClass(order.status)">{{ statusLabel(order.status) }}</span></span>
+        </div>
+
+        <hr class="divider">
+
+        <div class="address-block">
+          <span class="address-title">Shipping address</span>
+          <div class="address-body">
+            <strong>{{ customerFullName }}</strong>
+            <ng-container *ngIf="order.order?.address as addr; else noAddr">
+              <div>{{ addr.address }}</div>
+              <div>{{ addr.city }} — {{ addr.pincode }}</div>
+              <div>{{ addr.country }}</div>
+            </ng-container>
+            <ng-template #noAddr>
+              <div class="muted">No address on file</div>
+            </ng-template>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Delivery timeline -->
+      <section class="card timeline-card">
+        <h2 class="card-title">Delivery timeline</h2>
+
+        <ol class="timeline">
+          <li class="step" *ngFor="let step of timeline" [class.done]="step.done">
+            <span class="step-marker">
+              <span class="step-check">✓</span>
+            </span>
+            <div class="step-body">
+              <span class="step-label">{{ step.label }}</span>
+              <span class="step-meta">{{ step.meta }}</span>
+            </div>
+          </li>
+        </ol>
+
+        <!-- Status changer -->
+        <div class="status-changer">
+          <div class="sc-head">
+            <span class="sc-title">Change order status</span>
+            <span class="sc-current">Current: <span class="pill" [ngClass]="statusClass(order.status)">{{ statusLabel(order.status) }}</span></span>
+          </div>
+          <div class="sc-row">
+            <select class="sc-select" [(ngModel)]="pendingStatus">
+              <option *ngFor="let s of statuses" [value]="s">{{ statusLabel(s) }}</option>
+            </select>
+            <button type="button" class="btn-amber"
+                    (click)="saveStatus()"
+                    [disabled]="isSavingStatus || pendingStatus === order.status">
+              {{ isSavingStatus ? 'Saving…' : 'Save' }}
+            </button>
+          </div>
+          <div class="sc-msg" *ngIf="statusMessage">{{ statusMessage }}</div>
+        </div>
+
+        <div class="timeline-actions">
+          <button type="button" class="btn-ghost">🖨️ Print label</button>
+          <button type="button" class="btn-ghost">↻ Refund</button>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>

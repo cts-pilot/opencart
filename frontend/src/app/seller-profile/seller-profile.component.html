@@ -1,27 +1,133 @@
-<div class="seller-page">
-  <div class="page-header">
-    <h2>Seller Profile</h2>
-    <div class="nav-links">
-      <a routerLink="/seller">Dashboard</a>
-      <a routerLink="/seller/products">Products</a>
-      <a routerLink="/seller/orders">Orders</a>
+<div class="seller-container">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-mark">OC</span>
+      <span class="brand-text">Seller</span>
     </div>
-  </div>
+    <nav>
+      <a class="nav-link" routerLink="/seller"><span class="ni">▦</span> Dashboard</a>
+      <a class="nav-link" routerLink="/seller/products"><span class="ni">📦</span> Products</a>
+      <a class="nav-link" routerLink="/seller/orders"><span class="ni">🧾</span> Orders</a>
+      <a class="nav-link" routerLink="/seller/reviews"><span class="ni">⭐</span> Reviews</a>
+      <a class="nav-link active" routerLink="/seller/profile"><span class="ni">👤</span> Profile</a>
+    </nav>
+    <button class="logout" (click)="logout()">Logout</button>
+  </aside>
 
-  <div class="profile-card">
-    <div class="row">
-      <label>Shop Name</label>
-      <input type="text" [(ngModel)]="shopName" />
+  <main class="content">
+    <div class="content-card">
+      <!-- Hero -->
+      <header class="hero">
+        <div class="avatar">{{ shopInitial }}</div>
+        <div class="hero-info">
+          <span class="role-pill">Seller account</span>
+          <h1 class="shop-name">{{ shopName || 'Your shop' }}</h1>
+          <p class="hero-meta">
+            <span>👤 {{ ownerName }}</span>
+            <span class="dot">·</span>
+            <span>✉️ {{ ownerEmail }}</span>
+          </p>
+        </div>
+      </header>
+
+      <!-- KPI strip -->
+      <section class="kpi-grid">
+        <div class="kpi">
+          <span class="kpi-icon">📦</span>
+          <div>
+            <span class="kpi-label">Products</span>
+            <span class="kpi-value">{{ totalProducts | number }}</span>
+          </div>
+        </div>
+        <div class="kpi">
+          <span class="kpi-icon">🧾</span>
+          <div>
+            <span class="kpi-label">Total orders</span>
+            <span class="kpi-value">{{ totalOrders | number }}</span>
+          </div>
+        </div>
+        <div class="kpi">
+          <span class="kpi-icon">⏳</span>
+          <div>
+            <span class="kpi-label">Pending</span>
+            <span class="kpi-value">{{ pendingOrders | number }}</span>
+          </div>
+        </div>
+        <div class="kpi">
+          <span class="kpi-icon">💰</span>
+          <div>
+            <span class="kpi-label">Revenue</span>
+            <span class="kpi-value">{{ totalRevenue | currency:'INR':'symbol':'1.0-0' }}</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cards row -->
+      <div class="cards-row">
+        <!-- Shop info (editable) -->
+        <section class="card edit-card">
+          <header class="card-head">
+            <h2>Shop information</h2>
+            <p class="card-sub">This is what customers see at checkout.</p>
+          </header>
+
+          <div class="field">
+            <label for="shopName">Shop name</label>
+            <input
+              id="shopName"
+              type="text"
+              [(ngModel)]="shopName"
+              placeholder="e.g. Santosh Sports House"
+            />
+            <p class="hint">Customers will see this name on every product and order.</p>
+          </div>
+
+          <div class="alert" *ngIf="message" [class.error]="messageKind === 'error'">
+            <span class="alert-icon">{{ messageKind === 'success' ? '✓' : '!' }}</span>
+            <span>{{ message }}</span>
+          </div>
+
+          <div class="card-actions">
+            <button type="button" class="btn-primary" (click)="save()" [disabled]="isSaving">
+              {{ isSaving ? 'Saving…' : 'Save changes' }}
+            </button>
+          </div>
+        </section>
+
+        <!-- Owner info (read-only) -->
+        <section class="card readonly-card">
+          <header class="card-head">
+            <h2>Account owner</h2>
+            <p class="card-sub">Personal details on file for this seller account.</p>
+          </header>
+
+          <div class="ro-row">
+            <span class="ro-label">Full name</span>
+            <span class="ro-value">{{ ownerName }}</span>
+          </div>
+          <div class="ro-row">
+            <span class="ro-label">Email</span>
+            <span class="ro-value">{{ ownerEmail }}</span>
+          </div>
+          <div class="ro-row">
+            <span class="ro-label">Role</span>
+            <span class="ro-value"><span class="role-chip">Seller</span></span>
+          </div>
+
+          <p class="ro-note">
+            Need to change your name or email? Contact support to update your account.
+          </p>
+        </section>
+      </div>
+
+      <!-- Danger zone / sign out -->
+      <section class="danger-card">
+        <div>
+          <h3>Sign out</h3>
+          <p>End your session on this device. You'll need to log in again to manage your shop.</p>
+        </div>
+        <button type="button" class="btn-danger" (click)="logout()">Logout</button>
+      </section>
     </div>
-    <div class="row">
-      <label>Email</label>
-      <div class="value">{{ profile?.user?.email }}</div>
-    </div>
-    <div class="row">
-      <label>Owner</label>
-      <div class="value">{{ profile?.user?.firstName }} {{ profile?.user?.lastName }}</div>
-    </div>
-    <div class="message" *ngIf="message">{{ message }}</div>
-    <button type="button" class="primary" (click)="save()">Save</button>
-  </div>
+  </main>
 </div>

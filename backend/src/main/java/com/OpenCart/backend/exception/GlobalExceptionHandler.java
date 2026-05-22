@@ -34,7 +34,9 @@ public class GlobalExceptionHandler {
             status = HttpStatus.CONFLICT;
         } else if (message.contains("invalid email or password")) {
             status = HttpStatus.UNAUTHORIZED;
-        } else if (message.contains("empty") || message.contains("invalid")) {
+        } else if (message.contains("empty")
+                || message.contains("invalid")
+                || message.contains("insufficient stock")) {
             status = HttpStatus.BAD_REQUEST;
         } else {
             status = HttpStatus.INTERNAL_SERVER_ERROR;

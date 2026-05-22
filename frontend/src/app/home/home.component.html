@@ -1,22 +1,87 @@
-<app-carousel></app-carousel>
-<div class="action-error" *ngIf="actionError">{{ actionError }}</div>
-<h3>Featured</h3>
-<div class="grid" *ngIf="!isLoading && products.length">
-  <app-product-card
-    *ngFor="let p of products"
-    [product]="p"
-    (addToCart)="handleAddToCart($event)"
-    (addToWishlist)="handleAddToWishlist($event)">
-  </app-product-card>
+<div class="home-shell">
+  <app-carousel></app-carousel>
+
+  <!-- Perks / trust strip -->
+  <section class="perks-strip">
+    <div class="perk">
+      <div class="perk-icon">🚚</div>
+      <div class="perk-text">
+        <span class="perk-title">Free delivery</span>
+        <span class="perk-sub">On orders over ₹500</span>
+      </div>
+    </div>
+    <div class="perk">
+      <div class="perk-icon">↩️</div>
+      <div class="perk-text">
+        <span class="perk-title">Easy returns</span>
+        <span class="perk-sub">7-day hassle-free</span>
+      </div>
+    </div>
+    <div class="perk">
+      <div class="perk-icon">🔒</div>
+      <div class="perk-text">
+        <span class="perk-title">Secure payment</span>
+        <span class="perk-sub">100% protected</span>
+      </div>
+    </div>
+    <div class="perk">
+      <div class="perk-icon">💬</div>
+      <div class="perk-text">
+        <span class="perk-title">24/7 support</span>
+        <span class="perk-sub">Always here to help</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="action-error" *ngIf="actionError">{{ actionError }}</div>
+
+  <section class="featured-section">
+    <div class="section-header">
+      <div>
+        <span class="eyebrow">Curated for you</span>
+        <h2 class="section-title">Featured products</h2>
+        <p class="section-subtitle">Hand-picked picks from across the catalog — fresh arrivals, trending styles and customer favourites.</p>
+      </div>
+      <div class="section-meta" *ngIf="!isLoading && products.length">
+        <span class="count-pill">{{ products.length }} items</span>
+      </div>
+    </div>
+
+    <div class="grid" *ngIf="!isLoading && products.length">
+      <app-product-card
+        *ngFor="let p of products"
+        [product]="p"
+        (addToCart)="handleAddToCart($event)"
+        (addToWishlist)="handleAddToWishlist($event)">
+      </app-product-card>
+    </div>
+
+    <div class="empty-state" *ngIf="!isLoading && !products.length">
+      <div class="empty-icon">🛍️</div>
+      <h3>No products found</h3>
+      <p>Try a different category or clear your search.</p>
+    </div>
+
+    <div class="loading-state" *ngIf="isLoading">
+      <div class="spinner"></div>
+      <p>Loading products…</p>
+    </div>
+  </section>
+
+  <!-- Seller CTA banner -->
+  <section class="seller-cta">
+    <div class="cta-content">
+      <span class="cta-eyebrow">For business owners</span>
+      <h3 class="cta-title">Start selling on OpenCart today.</h3>
+      <p class="cta-sub">Reach thousands of customers, manage your shop with ease, and grow your business with our seller tools.</p>
+      <a routerLink="/register" class="cta-button">Become a seller →</a>
+    </div>
+    <div class="cta-decor" aria-hidden="true">
+      <div class="decor-circle c1"></div>
+      <div class="decor-circle c2"></div>
+      <div class="decor-circle c3"></div>
+    </div>
+  </section>
 </div>
 
-<div class="empty-state" *ngIf="!isLoading && !products.length">
-  <p>No products found.</p>
-</div>
-
-<div class="loading-state" *ngIf="isLoading">
-  <p>Loading products...</p>
-</div>
-
-<!-- <app-brands></app-brands> -->
 <app-footer></app-footer>

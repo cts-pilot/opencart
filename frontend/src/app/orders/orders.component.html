@@ -1,35 +1,84 @@
-<div class="orders-container">
-  <h2>Your Orders</h2>
+<div class="orders-shell">
+  <header class="orders-head">
+    <h1>Your orders</h1>
+    <p class="sub">Track shipments and download receipts for every order.</p>
+  </header>
 
-  <div class="loading" *ngIf="isLoading">Loading orders...</div>
-
-  <div class="empty" *ngIf="!isLoading && !orders.length">
-    <p>No orders yet.</p>
+  <div class="state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading your orders…</p>
   </div>
 
-  <div class="order-card" *ngFor="let order of orders">
-    <div class="order-header">
-      <div>
-        <strong>Order #{{ order.orderId }}</strong>
-        <p>{{ order.createdAt | date:'medium' }}</p>
-      </div>
-      <button type="button" (click)="toggleOrderItems(order.orderId)">
-        {{ selectedOrderItems[order.orderId] ? 'Hide Items' : 'View Items' }}
-      </button>
-    </div>
-    <div class="order-address">
-      <span>{{ order.address.address }}, {{ order.address.city }}, {{ order.address.country }}</span>
-    </div>
+  <div class="empty" *ngIf="!isLoading && !orders.length">
+    <div class="empty-icon">📦</div>
+    <h3>No orders yet</h3>
+    <p>When you place an order, it'll show up here.</p>
+  </div>
 
-    <div class="order-items" *ngIf="selectedOrderItems[order.orderId]">
-      <div class="order-item" *ngFor="let item of selectedOrderItems[order.orderId]">
-        <img [src]="item.product.productUrl" alt="{{ item.product.productName }}">
-        <div>
-          <h4>{{ item.product.productName }}</h4>
-          <p>Qty: {{ item.qty }}</p>
+  <div class="orders-list" *ngIf="!isLoading && orders.length">
+    <article class="order-card" *ngFor="let order of orders">
+      <header class="oc-head">
+        <div class="oc-title">
+          <span class="oc-id">#{{ shortOrderId(order.orderId) }}</span>
+          <span class="oc-date">{{ order.createdAt | date:'mediumDate' }} · {{ order.createdAt | date:'shortTime' }}</span>
         </div>
-        <span class="status">{{ item.status }}</span>
+        <div class="oc-actions">
+          <button type="button" class="btn-amber" (click)="printReceipt(order)">
+            🖨 Print receipt
+          </button>
+          <button type="button" class="btn-ghost" (click)="toggleExpand(order.orderId)">
+            {{ expanded[order.orderId] ? 'Hide details' : 'View details' }}
+          </button>
+        </div>
+      </header>
+
+      <!-- Quick stats row -->
+      <div class="oc-stats">
+        <div class="stat">
+          <span class="s-label">Items</span>
+          <span class="s-value">{{ orderItemCount(order.orderId) || (orderItems[order.orderId]?.length || '—') }}</span>
+        </div>
+        <div class="stat">
+          <span class="s-label">Total paid</span>
+          <span class="s-value amber">{{ orderTotal(order.orderId) | currency:'INR':'symbol':'1.0-0' }}</span>
+        </div>
+        <div class="stat" *ngIf="orderSavings(order.orderId) > 0">
+          <span class="s-label">You saved</span>
+          <span class="s-value green">{{ orderSavings(order.orderId) | currency:'INR':'symbol':'1.0-0' }}</span>
+        </div>
+        <div class="stat" *ngIf="order.address">
+          <span class="s-label">Ship to</span>
+          <span class="s-value text">{{ order.address.city }}, {{ order.address.country }} <span class="pin">{{ order.address.pincode }}</span></span>
+        </div>
       </div>
-    </div>
+
+      <!-- Expanded items -->
+      <div class="oc-items" *ngIf="expanded[order.orderId] && orderItems[order.orderId]">
+        <div class="oc-item" *ngFor="let item of orderItems[order.orderId]">
+          <img [src]="item.product.productUrl" alt="">
+          <div class="ii-info">
+            <div class="ii-name">{{ item.product.productName }}</div>
+            <div class="ii-meta">
+              <span *ngIf="item.product.seller?.shopName" class="ii-shop">🏪 {{ item.product.seller?.shopName }}</span>
+              <span class="ii-qty">Qty {{ item.qty }}</span>
+              <span class="ii-offer" *ngIf="effectiveOfferPercent(item) as p">{{ p }}% OFF</span>
+            </div>
+          </div>
+          <div class="ii-price">
+            <span class="now">{{ lineTotal(item) | currency:'INR':'symbol':'1.0-0' }}</span>
+            <span class="was" *ngIf="hasOffer(item)">{{ lineOriginal(item) | currency:'INR':'symbol':'1.0-0' }}</span>
+          </div>
+          <span class="status-pill" [ngClass]="statusClass(item.status)">{{ statusLabel(item.status) }}</span>
+        </div>
+
+        <div class="oc-address" *ngIf="order.address">
+          <span class="addr-icon">📍</span>
+          <div>
+            <strong>Shipping to</strong>
+            <p>{{ order.address.address }}, {{ order.address.city }} — {{ order.address.pincode }}, {{ order.address.country }}</p>
+          </div>
+        </div>
+      </div>
+    </article>
   </div>
 </div>

@@ -84,6 +84,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   applySearch(term: string): void {
-    this.searchService.setSearchTerm(term.trim());
+    const t = term.trim();
+    this.searchService.setSearchTerm(t);
+    this.router.navigate(['/home']);
   }
 }
